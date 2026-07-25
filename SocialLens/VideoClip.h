@@ -22,6 +22,7 @@ public:
     VideoClip(int assetId, const char* fileName, double baseprice, int duration, VideoType vidtype);
     VideoClip(const VideoClip& other);
     ~VideoClip();
+    VideoClip& operator=(const VideoClip& other);
 
     void setVidType(VideoType);
     void setDuration(int seconds);

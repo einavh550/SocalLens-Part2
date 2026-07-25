@@ -1,0 +1,79 @@
+#include "StillPhoto.h"
+#include <iostream>
+
+// Pricing rules for photos (documented assumptions for Part 2):
+//   - a "Story" photo is priced 20% above its base price
+//   - a "Filter" edit adds 15% over a natural (unedited) look
+#define PHOTO_STORY_MULTIPLIER  1.20
+#define PHOTO_FILTER_MULTIPLIER 1.15
+
+StillPhoto::StillPhoto(int id, const char* fileName, double basePrice,
+    Orientation orient, EditStyle style)
+    : DigitalAsset(id, fileName, basePrice), orientation(orient), editStyle(style)
+{
+}
+
+StillPhoto::StillPhoto(const StillPhoto& other)
+    : DigitalAsset(other), orientation(other.orientation), editStyle(other.editStyle)
+{
+}
+
+StillPhoto::~StillPhoto()
+{
+}
+
+StillPhoto& StillPhoto::operator=(const StillPhoto& other)
+{
+    if (this != &other) {
+        // Let the base class copy its own (heap-allocated) members correctly.
+        DigitalAsset::operator=(other);
+        orientation = other.orientation;
+        editStyle = other.editStyle;
+    }
+    return *this;
+}
+
+StillPhoto::Orientation StillPhoto::getOrientation() const
+{
+    return orientation;
+}
+
+StillPhoto::EditStyle StillPhoto::getEditStyle() const
+{
+    return editStyle;
+}
+
+void StillPhoto::setOrientation(Orientation orient)
+{
+    orientation = orient;
+}
+
+void StillPhoto::setEditStyle(EditStyle style)
+{
+    editStyle = style;
+}
+
+double StillPhoto::calculatePrice() const
+{
+    double price = getBasePrice();
+    if (orientation == STORY)
+        price *= PHOTO_STORY_MULTIPLIER;
+    if (editStyle == FILTER)
+        price *= PHOTO_FILTER_MULTIPLIER;
+    return price;
+}
+
+DigitalAsset* StillPhoto::clone() const
+{
+    // Polymorphic copy: the caller gets a brand-new StillPhoto it now owns.
+    return new StillPhoto(*this);
+}
+
+void StillPhoto::print() const
+{
+    DigitalAsset::print();
+    std::cout << " | Photo "
+              << (orientation == STORY ? "Story" : "Feed") << ", "
+              << (editStyle == FILTER ? "Filter" : "Natural")
+              << " -> $" << calculatePrice();
+}
