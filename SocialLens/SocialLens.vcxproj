@@ -141,6 +141,7 @@
     <ClInclude Include="ArrayUtil.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Campaign.h" />
+    <ClInclude Include="CampaignComparisonStrategy.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Date.h" />
     <ClInclude Include="DigitalAsset.h" />
@@ -149,6 +150,7 @@
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="SocialLensStudio.h" />
     <ClInclude Include="StillPhoto.h" />
+    <ClInclude Include="StudioFactories.h" />
     <ClInclude Include="StringUtil.h" />
     <ClInclude Include="VideoClip.h" />
   </ItemGroup>

@@ -9,6 +9,8 @@
 #include "Aircraft.h"
 #include "Drone.h"
 #include "Date.h"
+#include "StudioFactories.h"
+#include "CampaignComparisonStrategy.h"
 using namespace std;
 
 static int readInt(const char* prompt, int minValue = INT_MIN, int maxValue = INT_MAX) {
@@ -116,14 +118,16 @@ static void doAddAsset(Campaign* campaign) {
         int styleChoice = readInt("Choice: ", 1, 2);
         StillPhoto::Orientation orientation = (orientationChoice == 2) ? StillPhoto::STORY : StillPhoto::FEED;
         StillPhoto::EditStyle style = (styleChoice == 2) ? StillPhoto::NATURAL : StillPhoto::FILTER;
-        *campaign += new StillPhoto(id, fileName, basePrice, orientation, style);
+        StillPhotoFactory factory(orientation, style);
+        *campaign += factory.create(id, fileName, basePrice);
     }
     else {
         int duration = readInt("Duration (seconds): ", 0);
         cout << "Video type: 1=Feed  2=Story\n";
         int videoChoice = readInt("Choice: ", 1, 2);
         VideoClip::VideoType videoType = (videoChoice == 2) ? VideoClip::STORY : VideoClip::FEED;
-        *campaign += new VideoClip(id, fileName, basePrice, duration, videoType);
+        VideoClipFactory factory(duration, videoType);
+        *campaign += factory.create(id, fileName, basePrice);
     }
     cout << "Asset added to campaign.\n";
 }
@@ -144,11 +148,13 @@ static void doAddEquipment(SocialLensStudio& studio) {
         cout << "Has tripod:  1=Yes  2=No\n";
         int tripodChoice = readInt("Choice: ", 1, 2);
         Camera::CamType camType = (camChoice == 2) ? Camera::VIDEO : Camera::STILLS;
-        studio.addEquipment(new Camera(id, model, camType, tripodChoice == 1));
+        CameraFactory factory(camType, tripodChoice == 1);
+        studio.addEquipment(factory.create(id, model));
     }
     else if (type == 2) {
         int altitude = readInt("Max altitude (m): ", 0);
-        studio.addEquipment(new Aircraft(id, model, altitude));
+        AircraftFactory factory(altitude);
+        studio.addEquipment(factory.create(id, model));
     }
     else {
         cout << "Camera type: 1=Stills  2=Video\n";
@@ -158,7 +164,8 @@ static void doAddEquipment(SocialLensStudio& studio) {
         int altitude = readInt("Max altitude (m):   ", 0);
         int battery = readInt("Battery life (min): ", 0);
         Camera::CamType camType = (camChoice == 2) ? Camera::VIDEO : Camera::STILLS;
-        studio.addEquipment(new Drone(id, model, camType, tripodChoice == 1, altitude, battery));
+        DroneFactory factory(camType, tripodChoice == 1, altitude, battery);
+        studio.addEquipment(factory.create(id, model));
     }
     cout << "Equipment added to studio.\n";
 }
@@ -187,12 +194,12 @@ static void doCompareCampaigns(Campaign* first, Campaign* second) {
         cout << "Error: need two campaigns to compare.\n";
         return;
     }
-    if (*first > *second)
-        cout << "Campaign \"" << first->getTitle() << "\" is more profitable.\n";
-    else if (*second > *first)
-        cout << "Campaign \"" << second->getTitle() << "\" is more profitable.\n";
-    else
+    HigherProfitComparisonStrategy strategy;
+    const Campaign* selected = strategy.pick(first, second);
+    if (selected == nullptr)
         cout << "Both campaigns have equal total price.\n";
+    else
+        cout << "Campaign \"" << selected->getTitle() << "\" is more profitable.\n";
 }
 
 static void doCloseDay(SocialLensStudio& studio) {

@@ -86,6 +86,9 @@
     <ClInclude Include="Campaign.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CampaignComparisonStrategy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="StringUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -93,6 +96,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LinkedList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StudioFactories.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
