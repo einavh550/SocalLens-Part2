@@ -1,0 +1,38 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build SocialLens solution",
+            "type": "shell",
+            "command": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
+            "args": [
+                "SocialLens.sln",
+                "/t:Rebuild",
+                "/p:Configuration=Debug",
+                "/p:Platform=x64",
+                "/nologo",
+                "/v:minimal"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run SocialLens",
+            "type": "shell",
+            "command": "${workspaceFolder}\\x64\\Debug\\SocialLens.exe",
+            "dependsOn": "Build SocialLens solution",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

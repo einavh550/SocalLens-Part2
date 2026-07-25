@@ -146,6 +146,7 @@
     <ClInclude Include="DigitalAsset.h" />
     <ClInclude Include="Drone.h" />
     <ClInclude Include="Equipment.h" />
+    <ClInclude Include="LinkedList.h" />
     <ClInclude Include="SocialLensStudio.h" />
     <ClInclude Include="StillPhoto.h" />
     <ClInclude Include="StringUtil.h" />
