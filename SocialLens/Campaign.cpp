@@ -5,6 +5,34 @@
 
 #define CAMPAIGN_INITIAL_CAPACITY 8
 
+namespace {
+struct EquipmentListCopyContext {
+    LinkedList<Equipment*>* target;
+};
+
+struct EquipmentListPrintContext {
+    std::ostream* output;
+};
+
+void copyEquipmentPointer(Equipment* const& equipment, void* rawContext)
+{
+    EquipmentListCopyContext* context = static_cast<EquipmentListCopyContext*>(rawContext);
+    if (context != nullptr && context->target != nullptr) {
+        context->target->addToEnd(equipment);
+    }
+}
+
+void printEquipmentPointer(Equipment* const& equipment, void* rawContext)
+{
+    EquipmentListPrintContext* context = static_cast<EquipmentListPrintContext*>(rawContext);
+    if (context != nullptr && context->output != nullptr && equipment != nullptr) {
+        *(context->output) << "  - ";
+        equipment->printSpecs();
+        *(context->output) << "\n";
+    }
+}
+}
+
 Campaign::Campaign(int id, const char* title, const Client& owner, const Date& date)
     : campaignId(id),
       title(cloneString(title)),
@@ -12,10 +40,7 @@ Campaign::Campaign(int id, const char* title, const Client& owner, const Date& d
       assets(new DigitalAsset*[CAMPAIGN_INITIAL_CAPACITY]),
       assetCount(0),
       assetCapacity(CAMPAIGN_INITIAL_CAPACITY),
-      creationDate(date),
-      reservedEquipment(new Equipment*[CAMPAIGN_INITIAL_CAPACITY]),
-      equipmentCount(0),
-      equipmentCapacity(CAMPAIGN_INITIAL_CAPACITY)
+    creationDate(date)
 {
 }
 
@@ -26,16 +51,14 @@ Campaign::Campaign(const Campaign& other)
       assets(new DigitalAsset*[other.assetCapacity]),
       assetCount(other.assetCount),
       assetCapacity(other.assetCapacity),
-      creationDate(other.creationDate),
-      reservedEquipment(new Equipment*[other.equipmentCapacity]),
-      equipmentCount(other.equipmentCount),
-      equipmentCapacity(other.equipmentCapacity)
+      creationDate(other.creationDate)
 {
     for (int i = 0; i < assetCount; ++i)
         assets[i] = other.assets[i]->clone();
 
-    for (int i = 0; i < equipmentCount; ++i)
-        reservedEquipment[i] = other.reservedEquipment[i];
+    EquipmentListCopyContext copyContext;
+    copyContext.target = &reservedEquipment;
+    other.reservedEquipment.forEach(copyEquipmentPointer, &copyContext);
 }
 
 Campaign::~Campaign()
@@ -43,8 +66,6 @@ Campaign::~Campaign()
     for (int i = 0; i < assetCount; ++i)
         delete assets[i];
     delete[] assets;
-
-    delete[] reservedEquipment;
 
     delete[] title;
 }
@@ -87,14 +108,9 @@ void Campaign::reserveEquipment(Equipment* eq)
     if (eq == nullptr)
         return;
 
-    if (equipmentCount == equipmentCapacity) {
-        equipmentCapacity *= 2;
-        reservedEquipment = reinterpret_cast<Equipment**>(
-            growPointerArray(reinterpret_cast<void**>(reservedEquipment), equipmentCount, equipmentCapacity));
+    if (reservedEquipment.addToEnd(eq)) {
+        eq->setIsAvailable(false);
     }
-
-    reservedEquipment[equipmentCount++] = eq;
-    eq->setIsAvailable(false);
 }
 
 Campaign& Campaign::operator+=(DigitalAsset* asset)
@@ -135,12 +151,10 @@ std::ostream& operator<<(std::ostream& os, const Campaign& c)
         os << "\n";
     }
 
-    os << "Reserved equipment (" << c.equipmentCount << "):\n";
-    for (int i = 0; i < c.equipmentCount; ++i) {
-        os << "  - ";
-        c.reservedEquipment[i]->printSpecs();
-        os << "\n";
-    }
+    os << "Reserved equipment (" << c.reservedEquipment.size() << "):\n";
+    EquipmentListPrintContext printContext;
+    printContext.output = &os;
+    c.reservedEquipment.forEach(printEquipmentPointer, &printContext);
 
     os << "TOTAL: $" << c.getTotalPrice() << "\n";
     os << "==========================\n";

@@ -6,6 +6,7 @@
 #include "Date.h"
 #include "DigitalAsset.h"
 #include "Equipment.h"
+#include "LinkedList.h"
 
 class Campaign
 {
@@ -16,9 +17,7 @@ class Campaign
 	int assetCount;
 	int assetCapacity;
 	Date creationDate;
-	Equipment** reservedEquipment;
-	int equipmentCount;
-	int equipmentCapacity;
+	LinkedList<Equipment*> reservedEquipment;
 
 	
 public:

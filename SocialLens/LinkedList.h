@@ -103,6 +103,19 @@ public:
         os << "]";
     }
 
+    void forEach(void (*visitor)(const T&, void*), void* context) const
+    {
+        if (visitor == nullptr) {
+            return;
+        }
+
+        Node* current = head;
+        while (current != nullptr) {
+            visitor(current->data, context);
+            current = current->next;
+        }
+    }
+
     int size() const
     {
         return itemCount;
