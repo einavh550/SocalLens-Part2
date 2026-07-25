@@ -123,9 +123,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Aircraft.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Date.cpp" />
     <ClCompile Include="DigitalAsset.cpp" />
+    <ClCompile Include="Drone.cpp" />
+    <ClCompile Include="Equipment.cpp" />
     <ClCompile Include="StillPhoto.cpp" />
     <ClCompile Include="VideoClip.cpp" />
     <ClCompile Include="program.cpp" />

@@ -23,6 +23,7 @@ public:
             bool hasTripod, bool available = true);
         Camera(const Camera& other);
         ~Camera();
+        Camera& operator=(const Camera& other);
 
         CamType getCamType() const;
         bool getHasTripod() const;

@@ -30,6 +30,18 @@
     <ClCompile Include="VideoClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Equipment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Aircraft.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Drone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
