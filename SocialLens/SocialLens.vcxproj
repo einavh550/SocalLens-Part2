@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="Aircraft.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Campaign.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Date.cpp" />
     <ClCompile Include="DigitalAsset.cpp" />

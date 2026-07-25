@@ -42,6 +42,9 @@
     <ClCompile Include="Drone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Campaign.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

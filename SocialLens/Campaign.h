@@ -10,7 +10,7 @@
 class Campaign
 {
 	int campaignId;
-	char* titel;
+	char* title;
 	const Client& campaignOwner;
 	DigitalAsset** assets;
 	int assetCount;
