@@ -1,13 +1,14 @@
 #ifndef SOCIAL_LENS_STUDIO_H
 #define SOCIAL_LENS_STUDIO_H
 
+#include <string>
 #include "Client.h"
 #include "Equipment.h"
 
 class SocialLensStudio {
     static const int INITIAL_CAPACITY = 20;
 
-    char* studioName;
+    std::string studioName;
     Client** clients;
     int clientCount;
     int clientCapacity;

@@ -1,10 +1,9 @@
 #include "SocialLensStudio.h"
-#include "StringUtil.h"
 #include "ArrayUtil.h"
 #include <iostream>
 
 SocialLensStudio::SocialLensStudio(const char* studioName)
-    : studioName(cloneString(studioName)),
+    : studioName(studioName == nullptr ? "" : studioName),
       clients(new Client*[INITIAL_CAPACITY]),
       clientCount(0),
       clientCapacity(INITIAL_CAPACITY),
@@ -42,13 +41,11 @@ void SocialLensStudio::releaseAll()
     for (int i = 0; i < equipmentCount; ++i)
         delete equipmentList[i];
     delete[] equipmentList;
-
-    delete[] studioName;
 }
 
 void SocialLensStudio::copyFrom(const SocialLensStudio& other)
 {
-    studioName = cloneString(other.studioName);
+    studioName = other.studioName;
 
     clientCount = other.clientCount;
     clientCapacity = other.clientCapacity;
@@ -65,7 +62,7 @@ void SocialLensStudio::copyFrom(const SocialLensStudio& other)
 
 const char* SocialLensStudio::getStudioName() const
 {
-    return studioName;
+    return studioName.c_str();
 }
 
 int SocialLensStudio::getClientCount() const

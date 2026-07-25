@@ -1,35 +1,29 @@
 #include "Client.h"
 #include "Campaign.h"
-#include "StringUtil.h"
 #include <iostream>
 
 Client::Client(int id, const char* name, const char* phone)
-    : clientId(id), name(cloneString(name)), phone(cloneString(phone))
+    : clientId(id),
+      name(name == nullptr ? "" : name),
+      phone(phone == nullptr ? "" : phone)
 {
 }
 
 Client::Client(const Client& other)
-    : clientId(other.clientId),
-      name(cloneString(other.name)),
-      phone(cloneString(other.phone))
+    : clientId(other.clientId), name(other.name), phone(other.phone)
 {
 }
 
 Client::~Client()
 {
-    delete[] name;
-    delete[] phone;
 }
 
 Client& Client::operator=(const Client& other)
 {
     if (this != &other) {
-        delete[] name;
-        delete[] phone;
-
         clientId = other.clientId;
-        name = cloneString(other.name);
-        phone = cloneString(other.phone);
+        name = other.name;
+        phone = other.phone;
     }
     return *this;
 }
@@ -41,24 +35,22 @@ int Client::getClientId() const
 
 const char* Client::getName() const
 {
-    return name;
+    return name.c_str();
 }
 
 const char* Client::getPhone() const
 {
-    return phone;
+    return phone.c_str();
 }
 
 void Client::setName(const char* newName)
 {
-    delete[] name;
-    name = cloneString(newName);
+    name = (newName == nullptr ? "" : newName);
 }
 
 void Client::setPhone(const char* newPhone)
 {
-    delete[] phone;
-    phone = cloneString(newPhone);
+    phone = (newPhone == nullptr ? "" : newPhone);
 }
 
 Campaign* Client::openCampaign(int campaignId, const char* title, const Date& date) const

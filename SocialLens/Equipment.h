@@ -1,11 +1,13 @@
 #ifndef EQUIPMENT_H
 #define EQUIPMENT_H
 
+#include <string>
+
 
 class Equipment
 {
 	int equipmentid;
-	char* modelName;
+	std::string modelName;
 	bool isAvailable;
 
 public:

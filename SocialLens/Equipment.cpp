@@ -1,29 +1,26 @@
 #include "Equipment.h"
-#include "StringUtil.h"
 
 Equipment::Equipment(int id, const char* modelName, bool available)
-    : equipmentid(id), modelName(cloneString(modelName)), isAvailable(available)
+    : equipmentid(id),
+      modelName(modelName == nullptr ? "" : modelName),
+      isAvailable(available)
 {
 }
 
 Equipment::Equipment(const Equipment& other)
-    : equipmentid(other.equipmentid),
-      modelName(cloneString(other.modelName)),
-      isAvailable(other.isAvailable)
+    : equipmentid(other.equipmentid), modelName(other.modelName), isAvailable(other.isAvailable)
 {
 }
 
 Equipment::~Equipment()
 {
-    delete[] modelName;
 }
 
 Equipment& Equipment::operator=(const Equipment& other)
 {
     if (this != &other) {
-        delete[] modelName;
         equipmentid = other.equipmentid;
-        modelName = cloneString(other.modelName);
+        modelName = other.modelName;
         isAvailable = other.isAvailable;
     }
     return *this;
@@ -36,7 +33,7 @@ int Equipment::getEquipmentId() const
 
 const char* Equipment::getModelName() const
 {
-    return modelName;
+    return modelName.c_str();
 }
 
 bool Equipment::getIsAvailable() const
@@ -46,8 +43,7 @@ bool Equipment::getIsAvailable() const
 
 void Equipment::setModelName(const char* name)
 {
-    delete[] modelName;
-    modelName = cloneString(name);
+    modelName = (name == nullptr ? "" : name);
 }
 
 void Equipment::setIsAvailable(bool available)

@@ -1,13 +1,15 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+#include <string>
+
 class Campaign;
 class Date;
 
 class Client {
     int clientId;
-    char* name;
-    char* phone;
+    std::string name;
+    std::string phone;
 
 public:
     Client(int id, const char* name, const char* phone);

@@ -1,30 +1,27 @@
 #include "DigitalAsset.h"
-#include "StringUtil.h"
 #include <iostream>
 
 DigitalAsset::DigitalAsset(int id, const char* fileName, double basePrice)
-    : assetId(id), fileName(cloneString(fileName)), basePrice(basePrice)
+    : assetId(id),
+      fileName(fileName == nullptr ? "" : fileName),
+      basePrice(basePrice)
 {
 }
 
 DigitalAsset::DigitalAsset(const DigitalAsset& other)
-    : assetId(other.assetId),
-      fileName(cloneString(other.fileName)),
-      basePrice(other.basePrice)
+    : assetId(other.assetId), fileName(other.fileName), basePrice(other.basePrice)
 {
 }
 
 DigitalAsset::~DigitalAsset()
 {
-    delete[] fileName;
 }
 
 DigitalAsset& DigitalAsset::operator=(const DigitalAsset& other)
 {
     if (this != &other) {
-        delete[] fileName;
         assetId = other.assetId;
-        fileName = cloneString(other.fileName);
+        fileName = other.fileName;
         basePrice = other.basePrice;
     }
     return *this;
@@ -37,7 +34,7 @@ int DigitalAsset::getAssetId() const
 
 const char* DigitalAsset::getFileName() const
 {
-    return fileName;
+    return fileName.c_str();
 }
 
 double DigitalAsset::getBasePrice() const
@@ -47,8 +44,7 @@ double DigitalAsset::getBasePrice() const
 
 void DigitalAsset::setFileName(const char* newFileName)
 {
-    delete[] fileName;
-    fileName = cloneString(newFileName);
+    fileName = (newFileName == nullptr ? "" : newFileName);
 }
 
 void DigitalAsset::setBasePrice(double price)

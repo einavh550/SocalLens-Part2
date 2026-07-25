@@ -1,5 +1,4 @@
 #include "Campaign.h"
-#include "StringUtil.h"
 #include "ArrayUtil.h"
 #include <iostream>
 
@@ -35,18 +34,18 @@ void printEquipmentPointer(Equipment* const& equipment, void* rawContext)
 
 Campaign::Campaign(int id, const char* title, const Client& owner, const Date& date)
     : campaignId(id),
-      title(cloneString(title)),
+            title(title == nullptr ? "" : title),
       campaignOwner(owner),
       assets(new DigitalAsset*[CAMPAIGN_INITIAL_CAPACITY]),
       assetCount(0),
       assetCapacity(CAMPAIGN_INITIAL_CAPACITY),
-    creationDate(date)
+            creationDate(date)
 {
 }
 
 Campaign::Campaign(const Campaign& other)
     : campaignId(other.campaignId),
-      title(cloneString(other.title)),
+    title(other.title),
       campaignOwner(other.campaignOwner),
       assets(new DigitalAsset*[other.assetCapacity]),
       assetCount(other.assetCount),
@@ -66,8 +65,6 @@ Campaign::~Campaign()
     for (int i = 0; i < assetCount; ++i)
         delete assets[i];
     delete[] assets;
-
-    delete[] title;
 }
 
 int Campaign::getCampaignId() const
@@ -77,7 +74,7 @@ int Campaign::getCampaignId() const
 
 const char* Campaign::getTitle() const
 {
-    return title;
+    return title.c_str();
 }
 
 const Client& Campaign::getCampaignOwner() const

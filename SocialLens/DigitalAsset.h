@@ -2,11 +2,12 @@
 #define DIGITAL_ASSET_H
 
 #include <ostream>
+#include <string>
 
 class DigitalAsset
 {
 	int assetId;
-	char* fileName;
+	std::string fileName;
 	double basePrice;
 
 public:

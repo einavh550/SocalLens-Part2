@@ -2,6 +2,7 @@
 #define CAMPAIGN_H
 
 #include <ostream>
+#include <string>
 #include "Client.h"
 #include "Date.h"
 #include "DigitalAsset.h"
@@ -11,7 +12,7 @@
 class Campaign
 {
 	int campaignId;
-	char* title;
+	std::string title;
 	const Client& campaignOwner;
 	DigitalAsset** assets;
 	int assetCount;
