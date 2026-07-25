@@ -12,10 +12,13 @@ class SocialLensStudio {
     std::vector<Equipment*> equipmentList;
 
 public:
-    SocialLensStudio(const char* studioName);
-    SocialLensStudio(const SocialLensStudio& other);
+    static SocialLensStudio& getInstance(const char* studioName = "SocialLens Studio");
+
+    SocialLensStudio(const SocialLensStudio& other) = delete;
+    SocialLensStudio(SocialLensStudio&& other) = delete;
     ~SocialLensStudio();
-    SocialLensStudio& operator=(const SocialLensStudio& other);
+    SocialLensStudio& operator=(const SocialLensStudio& other) = delete;
+    SocialLensStudio& operator=(SocialLensStudio&& other) = delete;
 
     const char* getStudioName() const;
     int getClientCount() const;
@@ -34,8 +37,8 @@ public:
     void print() const;
 
 private:
+    SocialLensStudio(const char* studioName);
     void releaseAll();
-    void copyFrom(const SocialLensStudio& other);
 };
 
 #endif

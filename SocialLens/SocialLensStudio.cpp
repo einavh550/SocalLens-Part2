@@ -6,23 +6,15 @@ SocialLensStudio::SocialLensStudio(const char* studioName)
 {
 }
 
-SocialLensStudio::SocialLensStudio(const SocialLensStudio& other)
+SocialLensStudio& SocialLensStudio::getInstance(const char* studioName)
 {
-    copyFrom(other);
+    static SocialLensStudio instance(studioName);
+    return instance;
 }
 
 SocialLensStudio::~SocialLensStudio()
 {
     releaseAll();
-}
-
-SocialLensStudio& SocialLensStudio::operator=(const SocialLensStudio& other)
-{
-    if (this != &other) {
-        releaseAll();
-        copyFrom(other);
-    }
-    return *this;
 }
 
 void SocialLensStudio::releaseAll()
@@ -34,19 +26,6 @@ void SocialLensStudio::releaseAll()
     for (size_t i = 0; i < equipmentList.size(); ++i)
         delete equipmentList[i];
     equipmentList.clear();
-}
-
-void SocialLensStudio::copyFrom(const SocialLensStudio& other)
-{
-    studioName = other.studioName;
-
-    clients.reserve(other.clients.size());
-    for (size_t i = 0; i < other.clients.size(); ++i)
-        clients.push_back(new Client(*other.clients[i]));
-
-    equipmentList.reserve(other.equipmentList.size());
-    for (size_t i = 0; i < other.equipmentList.size(); ++i)
-        equipmentList.push_back(other.equipmentList[i]->clone());
 }
 
 const char* SocialLensStudio::getStudioName() const

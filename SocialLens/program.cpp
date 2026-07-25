@@ -201,7 +201,7 @@ static void doCloseDay(SocialLensStudio& studio) {
 }
 
 int main() {
-    SocialLensStudio studio("SocialLens Studio");
+    SocialLensStudio& studio = SocialLensStudio::getInstance("SocialLens Studio");
 
     Campaign* activeCampaign = nullptr;
     Campaign* previousCampaign = nullptr;
