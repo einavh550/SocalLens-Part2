@@ -16,7 +16,7 @@ public:
     void setBatteryLife(int minutes);
 
     void printSpecs() const override;
-    Equipment* clone() const override;
+    std::unique_ptr<Equipment> clone() const override;
 };
 
 #endif

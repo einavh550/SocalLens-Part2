@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <string>
+#include <memory>
 
 class DigitalAsset
 {
@@ -24,7 +25,7 @@ public:
 	void setBasePrice(double price);
 
 	virtual double calculatePrice() const = 0;
-	virtual DigitalAsset* clone() const = 0;
+	virtual std::unique_ptr<DigitalAsset> clone() const = 0;
 	virtual void print() const;
 
 private:

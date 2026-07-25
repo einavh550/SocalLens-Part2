@@ -28,7 +28,7 @@ public:
     int getDuration() const;
 
     double calculatePrice() const override;
-    DigitalAsset* clone() const override;
+    std::unique_ptr<DigitalAsset> clone() const override;
     void print() const override;
 };
 

@@ -1,5 +1,6 @@
 #include "SocialLensStudio.h"
 #include <iostream>
+#include <utility>
 
 SocialLensStudio::SocialLensStudio(const char* studioName)
     : studioName(studioName == nullptr ? "" : studioName)
@@ -10,22 +11,6 @@ SocialLensStudio& SocialLensStudio::getInstance(const char* studioName)
 {
     static SocialLensStudio instance(studioName);
     return instance;
-}
-
-SocialLensStudio::~SocialLensStudio()
-{
-    releaseAll();
-}
-
-void SocialLensStudio::releaseAll()
-{
-    for (size_t i = 0; i < clients.size(); ++i)
-        delete clients[i];
-    clients.clear();
-
-    for (size_t i = 0; i < equipmentList.size(); ++i)
-        delete equipmentList[i];
-    equipmentList.clear();
 }
 
 const char* SocialLensStudio::getStudioName() const
@@ -43,27 +28,27 @@ int SocialLensStudio::getEquipmentCount() const
     return static_cast<int>(equipmentList.size());
 }
 
-void SocialLensStudio::registerClient(Client* client)
+void SocialLensStudio::registerClient(std::unique_ptr<Client> client)
 {
     if (client == nullptr)
         return;
 
-    clients.push_back(client);
+    clients.push_back(std::move(client));
 }
 
-void SocialLensStudio::addEquipment(Equipment* eq)
+void SocialLensStudio::addEquipment(std::unique_ptr<Equipment> eq)
 {
     if (eq == nullptr)
         return;
 
-    equipmentList.push_back(eq);
+    equipmentList.push_back(std::move(eq));
 }
 
 Client* SocialLensStudio::findClient(int clientId) const
 {
     for (size_t i = 0; i < clients.size(); ++i)
         if (clients[i]->getClientId() == clientId)
-            return clients[i];
+            return clients[i].get();
     return nullptr;
 }
 
@@ -71,7 +56,7 @@ Equipment* SocialLensStudio::findEquipment(int equipmentId) const
 {
     for (size_t i = 0; i < equipmentList.size(); ++i)
         if (equipmentList[i]->getEquipmentId() == equipmentId)
-            return equipmentList[i];
+            return equipmentList[i].get();
     return nullptr;
 }
 

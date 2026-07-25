@@ -1,5 +1,6 @@
 #include "Campaign.h"
 #include <iostream>
+#include <utility>
 
 namespace {
 struct EquipmentListCopyContext {
@@ -53,12 +54,6 @@ Campaign::Campaign(const Campaign& other)
     other.reservedEquipment.forEach(copyEquipmentPointer, &copyContext);
 }
 
-Campaign::~Campaign()
-{
-    for (size_t i = 0; i < assets.size(); ++i)
-        delete assets[i];
-}
-
 int Campaign::getCampaignId() const
 {
     return campaignId;
@@ -102,12 +97,12 @@ void Campaign::reserveEquipment(Equipment* eq)
     }
 }
 
-Campaign& Campaign::operator+=(DigitalAsset* asset)
+Campaign& Campaign::operator+=(std::unique_ptr<DigitalAsset> asset)
 {
     if (asset == nullptr)
         return *this;
 
-    assets.push_back(asset);
+    assets.push_back(std::move(asset));
     return *this;
 }
 

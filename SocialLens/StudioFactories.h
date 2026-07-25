@@ -1,6 +1,7 @@
 #ifndef STUDIO_FACTORIES_H
 #define STUDIO_FACTORIES_H
 
+#include <memory>
 #include "DigitalAsset.h"
 #include "StillPhoto.h"
 #include "VideoClip.h"
@@ -12,7 +13,7 @@
 class AssetFactory {
 public:
     virtual ~AssetFactory() {}
-    virtual DigitalAsset* create(int id, const char* fileName, double basePrice) const = 0;
+    virtual std::unique_ptr<DigitalAsset> create(int id, const char* fileName, double basePrice) const = 0;
 };
 
 class StillPhotoFactory : public AssetFactory {
@@ -25,9 +26,9 @@ public:
     {
     }
 
-    DigitalAsset* create(int id, const char* fileName, double basePrice) const
+    std::unique_ptr<DigitalAsset> create(int id, const char* fileName, double basePrice) const
     {
-        return new StillPhoto(id, fileName, basePrice, orientation, editStyle);
+        return std::make_unique<StillPhoto>(id, fileName, basePrice, orientation, editStyle);
     }
 };
 
@@ -41,16 +42,16 @@ public:
     {
     }
 
-    DigitalAsset* create(int id, const char* fileName, double basePrice) const
+    std::unique_ptr<DigitalAsset> create(int id, const char* fileName, double basePrice) const
     {
-        return new VideoClip(id, fileName, basePrice, durationInSeconds, videoType);
+        return std::make_unique<VideoClip>(id, fileName, basePrice, durationInSeconds, videoType);
     }
 };
 
 class EquipmentFactory {
 public:
     virtual ~EquipmentFactory() {}
-    virtual Equipment* create(int id, const char* modelName) const = 0;
+    virtual std::unique_ptr<Equipment> create(int id, const char* modelName) const = 0;
 };
 
 class CameraFactory : public EquipmentFactory {
@@ -63,9 +64,9 @@ public:
     {
     }
 
-    Equipment* create(int id, const char* modelName) const
+    std::unique_ptr<Equipment> create(int id, const char* modelName) const
     {
-        return new Camera(id, modelName, camType, hasTripod);
+        return std::make_unique<Camera>(id, modelName, camType, hasTripod);
     }
 };
 
@@ -78,9 +79,9 @@ public:
     {
     }
 
-    Equipment* create(int id, const char* modelName) const
+    std::unique_ptr<Equipment> create(int id, const char* modelName) const
     {
-        return new Aircraft(id, modelName, maxAltitudeMeters);
+        return std::make_unique<Aircraft>(id, modelName, maxAltitudeMeters);
     }
 };
 
@@ -96,9 +97,9 @@ public:
     {
     }
 
-    Equipment* create(int id, const char* modelName) const
+    std::unique_ptr<Equipment> create(int id, const char* modelName) const
     {
-        return new Drone(id, modelName, camType, hasTripod, maxAltitudeMeters, batteryLifeMinutes);
+        return std::make_unique<Drone>(id, modelName, camType, hasTripod, maxAltitudeMeters, batteryLifeMinutes);
     }
 };
 

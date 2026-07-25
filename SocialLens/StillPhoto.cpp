@@ -40,9 +40,9 @@ double StillPhoto::calculatePrice() const
     return price;
 }
 
-DigitalAsset* StillPhoto::clone() const
+std::unique_ptr<DigitalAsset> StillPhoto::clone() const
 {
-    return new StillPhoto(*this);
+    return std::make_unique<StillPhoto>(*this);
 }
 
 void StillPhoto::print() const

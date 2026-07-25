@@ -29,9 +29,9 @@ void Camera::printSpecs() const
               << (hasTripod ? "yes" : "no");
 }
 
-Equipment* Camera::clone() const
+std::unique_ptr<Equipment> Camera::clone() const
 {
-    return new Camera(*this);
+    return std::make_unique<Camera>(*this);
 }
 
 void Camera::setCamType(CamType type)

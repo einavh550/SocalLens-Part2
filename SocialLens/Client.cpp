@@ -34,9 +34,9 @@ void Client::setPhone(const char* newPhone)
     phone = (newPhone == nullptr ? "" : newPhone);
 }
 
-Campaign* Client::openCampaign(int campaignId, const char* title, const Date& date) const
+std::unique_ptr<Campaign> Client::openCampaign(int campaignId, const char* title, const Date& date) const
 {
-    return new Campaign(campaignId, title, *this, date);
+    return std::make_unique<Campaign>(campaignId, title, *this, date);
 }
 
 bool Client::operator==(const Client& other) const

@@ -1,5 +1,7 @@
 ﻿#include <iostream>
 #include <climits>
+#include <memory>
+#include <utility>
 #include "SocialLensStudio.h"
 #include "Client.h"
 #include "Campaign.h"
@@ -79,11 +81,11 @@ static void doRegisterClient(SocialLensStudio& studio) {
     char phone[30];
     readString("Client name: ", name, 100);
     readString("Phone number: ", phone, 30);
-    studio.registerClient(new Client(id, name, phone));
+    studio.registerClient(std::make_unique<Client>(id, name, phone));
     cout << "Client registered successfully.\n";
 }
 
-static Campaign* doOpenCampaign(SocialLensStudio& studio) {
+static std::unique_ptr<Campaign> doOpenCampaign(SocialLensStudio& studio) {
     int clientId = readInt("Client ID to open campaign for: ", 1);
     Client* owner = studio.findClient(clientId);
     if (owner == nullptr) {
@@ -94,7 +96,7 @@ static Campaign* doOpenCampaign(SocialLensStudio& studio) {
     char title[200];
     readString("Campaign title: ", title, 200);
     Date date = readDate("Creation date:");
-    Campaign* campaign = owner->openCampaign(campaignId, title, date);
+    std::unique_ptr<Campaign> campaign = owner->openCampaign(campaignId, title, date);
     cout << "Campaign opened successfully.\n";
     return campaign;
 }
@@ -210,8 +212,8 @@ static void doCloseDay(SocialLensStudio& studio) {
 int main() {
     SocialLensStudio& studio = SocialLensStudio::getInstance("SocialLens Studio");
 
-    Campaign* activeCampaign = nullptr;
-    Campaign* previousCampaign = nullptr;
+    std::unique_ptr<Campaign> activeCampaign;
+    std::unique_ptr<Campaign> previousCampaign;
 
     bool running = true;
     while (running) {
@@ -230,26 +232,25 @@ int main() {
             doRegisterClient(studio);
             break;
         case 2: {
-            Campaign* opened = doOpenCampaign(studio);
+            std::unique_ptr<Campaign> opened = doOpenCampaign(studio);
             if (opened != nullptr) {
-                delete previousCampaign;
-                previousCampaign = activeCampaign;
-                activeCampaign = opened;
+                previousCampaign = std::move(activeCampaign);
+                activeCampaign = std::move(opened);
                 cout << *activeCampaign;
             }
             break;
         }
         case 3:
-            doAddAsset(activeCampaign);
+            doAddAsset(activeCampaign.get());
             break;
         case 4:
             doAddEquipment(studio);
             break;
         case 5:
-            doReserveEquipment(studio, activeCampaign);
+            doReserveEquipment(studio, activeCampaign.get());
             break;
         case 6:
-            doCompareCampaigns(activeCampaign, previousCampaign);
+            doCompareCampaigns(activeCampaign.get(), previousCampaign.get());
             break;
         case 7:
             doCloseDay(studio);
@@ -263,7 +264,5 @@ int main() {
         }
     }
 
-    delete activeCampaign;
-    delete previousCampaign;
     return 0;
 }

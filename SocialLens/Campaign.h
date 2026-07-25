@@ -4,6 +4,7 @@
 #include <ostream>
 #include <string>
 #include <vector>
+#include <memory>
 #include "Client.h"
 #include "Date.h"
 #include "DigitalAsset.h"
@@ -15,7 +16,7 @@ class Campaign
 	int campaignId;
 	std::string title;
 	const Client& campaignOwner;
-	std::vector<DigitalAsset*> assets;
+	std::vector<std::unique_ptr<DigitalAsset>> assets;
 	Date creationDate;
 	LinkedList<Equipment*> reservedEquipment;
 
@@ -23,7 +24,6 @@ class Campaign
 public:
 	Campaign(int id, const char* title, const Client& owner, const Date& date);
 	Campaign(const Campaign& other);
-	~Campaign();
 
 	Campaign& operator=(const Campaign& other) = delete;
 
@@ -36,7 +36,7 @@ public:
 
 	void reserveEquipment(Equipment* eq);
 
-	Campaign& operator+=(DigitalAsset* asset);
+	Campaign& operator+=(std::unique_ptr<DigitalAsset> asset);
 
 	bool operator>(const Campaign& other) const;
 

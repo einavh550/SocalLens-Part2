@@ -23,7 +23,7 @@ void Aircraft::printSpecs() const
               << maxAltitudeMeters << "m";
 }
 
-Equipment* Aircraft::clone() const
+std::unique_ptr<Equipment> Aircraft::clone() const
 {
-    return new Aircraft(*this);
+    return std::make_unique<Aircraft>(*this);
 }

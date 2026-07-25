@@ -2,6 +2,7 @@
 #define CLIENT_H
 
 #include <string>
+#include <memory>
 
 class Campaign;
 class Date;
@@ -23,7 +24,7 @@ public:
     void setName(const char* name);
     void setPhone(const char* phone);
 
-    Campaign* openCampaign(int campaignId, const char* title, const Date& date) const;
+    std::unique_ptr<Campaign> openCampaign(int campaignId, const char* title, const Date& date) const;
 
     bool operator==(const Client& other) const;
     void print() const;

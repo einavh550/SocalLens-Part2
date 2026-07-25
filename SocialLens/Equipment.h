@@ -2,6 +2,7 @@
 #define EQUIPMENT_H
 
 #include <string>
+#include <memory>
 
 
 class Equipment
@@ -25,7 +26,7 @@ public:
 
 	virtual void printSpecs() const =0;
 
-	virtual Equipment* clone() const = 0;
+	virtual std::unique_ptr<Equipment> clone() const = 0;
 
 private:
 

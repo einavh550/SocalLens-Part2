@@ -3,20 +3,21 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include "Client.h"
 #include "Equipment.h"
 
 class SocialLensStudio {
     std::string studioName;
-    std::vector<Client*> clients;
-    std::vector<Equipment*> equipmentList;
+    std::vector<std::unique_ptr<Client>> clients;
+    std::vector<std::unique_ptr<Equipment>> equipmentList;
 
 public:
     static SocialLensStudio& getInstance(const char* studioName = "SocialLens Studio");
 
     SocialLensStudio(const SocialLensStudio& other) = delete;
     SocialLensStudio(SocialLensStudio&& other) = delete;
-    ~SocialLensStudio();
+    ~SocialLensStudio() = default;
     SocialLensStudio& operator=(const SocialLensStudio& other) = delete;
     SocialLensStudio& operator=(SocialLensStudio&& other) = delete;
 
@@ -24,9 +25,9 @@ public:
     int getClientCount() const;
     int getEquipmentCount() const;
 
-    void registerClient(Client* client);
+    void registerClient(std::unique_ptr<Client> client);
 
-    void addEquipment(Equipment* eq);
+    void addEquipment(std::unique_ptr<Equipment> eq);
 
     Client* findClient(int clientId) const;
 
@@ -38,7 +39,6 @@ public:
 
 private:
     SocialLensStudio(const char* studioName);
-    void releaseAll();
 };
 
 #endif

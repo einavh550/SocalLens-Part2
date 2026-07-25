@@ -42,9 +42,9 @@ double VideoClip::calculatePrice() const
     return price;
 }
 
-DigitalAsset* VideoClip::clone() const
+std::unique_ptr<DigitalAsset> VideoClip::clone() const
 {
-    return new VideoClip(*this);
+    return std::make_unique<VideoClip>(*this);
 }
 
 void VideoClip::print() const

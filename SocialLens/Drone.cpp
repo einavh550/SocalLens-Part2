@@ -30,7 +30,7 @@ void Drone::printSpecs() const
               << ", battery: " << batteryLifeMinutes << " min";
 }
 
-Equipment* Drone::clone() const
+std::unique_ptr<Equipment> Drone::clone() const
 {
-    return new Drone(*this);
+    return std::make_unique<Drone>(*this);
 }
