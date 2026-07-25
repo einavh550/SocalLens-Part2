@@ -131,6 +131,7 @@
     <ClCompile Include="DigitalAsset.cpp" />
     <ClCompile Include="Drone.cpp" />
     <ClCompile Include="Equipment.cpp" />
+    <ClCompile Include="SocialLensStudio.cpp" />
     <ClCompile Include="StillPhoto.cpp" />
     <ClCompile Include="VideoClip.cpp" />
     <ClCompile Include="program.cpp" />

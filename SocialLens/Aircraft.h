@@ -17,6 +17,7 @@ public:
     void setMaxAltitude(int meters);
 
     void printSpecs() const override;
+    Equipment* clone() const override;
 };
 
 #endif // AIRCRAFT_H

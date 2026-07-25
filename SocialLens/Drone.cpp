@@ -58,3 +58,8 @@ void Drone::printSpecs() const
               << ", max altitude: " << getMaxAltitude() << "m"
               << ", battery: " << batteryLifeMinutes << " min";
 }
+
+Equipment* Drone::clone() const
+{
+    return new Drone(*this);
+}

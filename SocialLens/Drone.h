@@ -20,6 +20,7 @@ public:
     void setBatteryLife(int minutes);
 
     void printSpecs() const override;
+    Equipment* clone() const override;
 };
 
 #endif // DRONE_H

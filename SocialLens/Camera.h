@@ -29,6 +29,7 @@ public:
         bool getHasTripod() const;
 
         void printSpecs() const override;
+        Equipment* clone() const override;
 
         void setCamType(CamType);
         void setHasTripod(bool tripod);

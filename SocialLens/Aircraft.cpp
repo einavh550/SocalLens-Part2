@@ -40,3 +40,8 @@ void Aircraft::printSpecs() const
     std::cout << "Aircraft \"" << getModelName() << "\", max altitude: "
               << maxAltitudeMeters << "m";
 }
+
+Equipment* Aircraft::clone() const
+{
+    return new Aircraft(*this);
+}

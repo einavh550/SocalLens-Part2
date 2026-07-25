@@ -50,6 +50,11 @@ void Camera::printSpecs() const
               << (hasTripod ? "yes" : "no");
 }
 
+Equipment* Camera::clone() const
+{
+    return new Camera(*this);
+}
+
 void Camera::setCamType(CamType type)
 {
     camType = type;
