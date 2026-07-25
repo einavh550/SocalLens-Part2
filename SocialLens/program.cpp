@@ -85,8 +85,8 @@ static Campaign* doOpenCampaign(SocialLensStudio& studio) {
     char title[200];
     readString("Campaign title: ", title, 200);
     Date date = readDate("Creation date:");
-    //reate a new Campaign
-    Campaign* camp = new Campaign(campId, title, *owner, date);
+    //let the owning client create its own campaign (proper encapsulation)
+    Campaign* camp = owner->openCampaign(campId, title, date);
     cout << "Campaign opened successfully.\n";
     return camp;
 }
@@ -239,12 +239,18 @@ int main() {
         case 1:
             doRegisterClient(studio);
             break;
-        case 2:
-            previousCampaign = activeCampaign;
-            activeCampaign = doOpenCampaign(studio);
-            if (activeCampaign != nullptr)
+        case 2: {
+            Campaign* opened = doOpenCampaign(studio);
+            if (opened != nullptr) {
+                // Keep only the two most recent campaigns; free the one we drop
+                // so opening many campaigns doesn't leak memory.
+                delete previousCampaign;
+                previousCampaign = activeCampaign;
+                activeCampaign = opened;
                 cout << *activeCampaign;
+            }
             break;
+        }
         case 3:
             doAddAsset(activeCampaign);
             break;
