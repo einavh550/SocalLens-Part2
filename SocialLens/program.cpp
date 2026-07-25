@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <climits>
 #include "SocialLensStudio.h"
 #include "Client.h"
 #include "Campaign.h"
@@ -10,212 +11,194 @@
 #include "Date.h"
 using namespace std;
 
-//input helpers
-
-static int readInt(const char* input) {
+static int readInt(const char* prompt, int minValue = INT_MIN, int maxValue = INT_MAX) {
     int value;
-    cout << input;
-    while (!(cin >> value)) {
+    cout << prompt;
+    while (!(cin >> value) || value < minValue || value > maxValue) {
+        if (cin.eof()) {
+            cin.clear();
+            return minValue;
+        }
         cin.clear();
         cin.ignore(10000, '\n');
-        cout << "Invalid input. " << input;
+        cout << "Invalid input, please try again. " << prompt;
     }
     cin.ignore(10000, '\n');
     return value;
 }
 
-static double readDouble(const char* input) {
+static double readDouble(const char* prompt, double minValue = 0.0) {
     double value;
-    cout << input;
-    while (!(cin >> value)) {
+    cout << prompt;
+    while (!(cin >> value) || value < minValue) {
+        if (cin.eof()) {
+            cin.clear();
+            return minValue;
+        }
         cin.clear();
         cin.ignore(10000, '\n');
-        cout << "Invalid input. " << input;
+        cout << "Invalid input, please try again. " << prompt;
     }
     cin.ignore(10000, '\n');
     return value;
 }
 
-static void readString(const char* input, char* buf, int maxLen) {
-    cout << input;
-    cin.getline(buf, maxLen);
-    if (!cin) {
+static void readString(const char* prompt, char* buffer, int maxLength) {
+    cout << prompt;
+    cin.getline(buffer, maxLength);
+    while (!cin || buffer[0] == '\0') {
+        if (cin.eof()) {
+            cin.clear();
+            buffer[0] = '\0';
+            return;
+        }
         cin.clear();
         cin.ignore(10000, '\n');
-        buf[0] = '\0';
+        cout << "Invalid input, please try again. " << prompt;
+        cin.getline(buffer, maxLength);
     }
 }
 
-static Date readDate(const char* input) {
-    cout << input << endl;
-    int d = readInt("  Day:   ");
-    int m = readInt("  Month: ");
-    int y = readInt("  Year:  ");
-    return Date(d, m, y);
+static Date readDate(const char* prompt) {
+    cout << prompt << endl;
+    int day = readInt("  Day (1-31):   ", 1, 31);
+    int month = readInt("  Month (1-12): ", 1, 12);
+    int year = readInt("  Year:         ", 1, 9999);
+    return Date(day, month, year);
 }
-
-//menu operations
-
 
 static void doRegisterClient(SocialLensStudio& studio) {
-    char name[100], phone[30];
-    //Reads an ID
-    int id = readInt("Client ID: ");
-    //Reads a name
+    int id = readInt("Client ID: ", 1);
+    if (studio.findClient(id) != nullptr) {
+        cout << "Error: a client with this ID already exists.\n";
+        return;
+    }
+    char name[100];
+    char phone[30];
     readString("Client name: ", name, 100);
-    //Reads a phone number
     readString("Phone number: ", phone, 30);
-    //Creates a new Client and stores it in the clients array
     studio.registerClient(new Client(id, name, phone));
     cout << "Client registered successfully.\n";
 }
 
-
 static Campaign* doOpenCampaign(SocialLensStudio& studio) {
-    //Ask for a client ID
-    int clientId = readInt("Client ID to open campaign for: ");
-    //Search for that client in the studio 
+    int clientId = readInt("Client ID to open campaign for: ", 1);
     Client* owner = studio.findClient(clientId);
     if (owner == nullptr) {
         cout << "Error: client not found.\n";
         return nullptr;
     }
-    //read campaign ID, title, and date
-    int  campId = readInt("Campaign ID:    ");
+    int campaignId = readInt("Campaign ID:    ", 1);
     char title[200];
     readString("Campaign title: ", title, 200);
     Date date = readDate("Creation date:");
-    //let the owning client create its own campaign (proper encapsulation)
-    Campaign* camp = owner->openCampaign(campId, title, date);
+    Campaign* campaign = owner->openCampaign(campaignId, title, date);
     cout << "Campaign opened successfully.\n";
-    return camp;
+    return campaign;
 }
 
 
 static void doAddAsset(Campaign* campaign) {
-    //Check that there is an active campaign
     if (campaign == nullptr) {
         cout << "Error: no active campaign. Open a campaign first.\n";
         return;
     }
-    //Ask if it's a photo or video
     cout << "Asset type: 1=Photo  2=Video\n";
-    int type = readInt("Choice: ");
-    //Read the common data
-    int id = readInt("Asset ID:    ");
+    int type = readInt("Choice: ", 1, 2);
+    int id = readInt("Asset ID:    ", 1);
     char fileName[200];
     readString("File name:   ", fileName, 200);
-    double base = readDouble("Base price:  ");
-    //read extra data base on type
+    double basePrice = readDouble("Base price:  ", 0.0);
     if (type == 1) {
         cout << "Orientation: 1=Feed  2=Story\n";
-        int o = readInt("Choice: ");
+        int orientationChoice = readInt("Choice: ", 1, 2);
         cout << "Edit style:  1=Filter  2=Natural\n";
-        int e = readInt("Choice: ");
-        StillPhoto::Orientation orient = (o == 2) ? StillPhoto::STORY : StillPhoto::FEED;
-        StillPhoto::EditStyle   style = (e == 2) ? StillPhoto::NATURAL : StillPhoto::FILTER;
-        //Add the new asset
-        *campaign += new StillPhoto(id, fileName, base, orient, style);
-    }
-    else if (type == 2) {
-        int dur = readInt("Duration (seconds): ");
-        cout << "Video type: 1=Feed  2=Story\n";
-        int v = readInt("Choice: ");
-        VideoClip::VideoType vtype = (v == 2) ? VideoClip::STORY : VideoClip::FEED;
-        //Add the new asset
-        *campaign += new VideoClip(id, fileName, base, dur, vtype);
+        int styleChoice = readInt("Choice: ", 1, 2);
+        StillPhoto::Orientation orientation = (orientationChoice == 2) ? StillPhoto::STORY : StillPhoto::FEED;
+        StillPhoto::EditStyle style = (styleChoice == 2) ? StillPhoto::NATURAL : StillPhoto::FILTER;
+        *campaign += new StillPhoto(id, fileName, basePrice, orientation, style);
     }
     else {
-        cout << "Invalid asset type.\n";
+        int duration = readInt("Duration (seconds): ", 0);
+        cout << "Video type: 1=Feed  2=Story\n";
+        int videoChoice = readInt("Choice: ", 1, 2);
+        VideoClip::VideoType videoType = (videoChoice == 2) ? VideoClip::STORY : VideoClip::FEED;
+        *campaign += new VideoClip(id, fileName, basePrice, duration, videoType);
     }
+    cout << "Asset added to campaign.\n";
 }
-
 
 static void doAddEquipment(SocialLensStudio& studio) {
-    //Ask what type of equipment
     cout << "Equipment type: 1=Camera  2=Aircraft  3=Drone\n";
-    int type = readInt("Choice: ");
-    //Read the common data
-    int id = readInt("Equipment ID:  ");
+    int type = readInt("Choice: ", 1, 3);
+    int id = readInt("Equipment ID:  ", 1);
+    if (studio.findEquipment(id) != nullptr) {
+        cout << "Error: equipment with this ID already exists.\n";
+        return;
+    }
     char model[100];
     readString("Model name:    ", model, 100);
-    //read extra data base on type
     if (type == 1) {
         cout << "Camera type: 1=Stills  2=Video\n";
-        int ct = readInt("Choice: ");
+        int camChoice = readInt("Choice: ", 1, 2);
         cout << "Has tripod:  1=Yes  2=No\n";
-        int ht = readInt("Choice: ");
-        Camera::CamType camType = (ct == 2) ? Camera::VIDEO : Camera::STILLS;
-        bool tripod = (ht == 1);
-        //Create object and add to Equipment
-        studio.addEquipment(new Camera(id, model, camType, tripod));
+        int tripodChoice = readInt("Choice: ", 1, 2);
+        Camera::CamType camType = (camChoice == 2) ? Camera::VIDEO : Camera::STILLS;
+        studio.addEquipment(new Camera(id, model, camType, tripodChoice == 1));
     }
     else if (type == 2) {
-        int alt = readInt("Max altitude (m): ");
-        //Create object and add to Equipment
-        studio.addEquipment(new Aircraft(id, model, alt));
-    }
-    else if (type == 3) {
-        cout << "Camera type: 1=Stills  2=Video\n";
-        int ct = readInt("Choice: ");
-        cout << "Has tripod:  1=Yes  2=No\n";
-        int ht = readInt("Choice: ");
-        int alt = readInt("Max altitude (m):   ");
-        int bat = readInt("Battery life (min): ");
-        Camera::CamType camType = (ct == 2) ? Camera::VIDEO : Camera::STILLS;
-        bool tripod = (ht == 1);
-        //Create object and add to Equipment
-        studio.addEquipment(new Drone(id, model, camType, tripod, alt, bat));
+        int altitude = readInt("Max altitude (m): ", 0);
+        studio.addEquipment(new Aircraft(id, model, altitude));
     }
     else {
-        cout << "Invalid equipment type.\n";
+        cout << "Camera type: 1=Stills  2=Video\n";
+        int camChoice = readInt("Choice: ", 1, 2);
+        cout << "Has tripod:  1=Yes  2=No\n";
+        int tripodChoice = readInt("Choice: ", 1, 2);
+        int altitude = readInt("Max altitude (m):   ", 0);
+        int battery = readInt("Battery life (min): ", 0);
+        Camera::CamType camType = (camChoice == 2) ? Camera::VIDEO : Camera::STILLS;
+        studio.addEquipment(new Drone(id, model, camType, tripodChoice == 1, altitude, battery));
     }
+    cout << "Equipment added to studio.\n";
 }
 
-
 static void doReserveEquipment(SocialLensStudio& studio, Campaign* campaign) {
-    //Check there is an active campaign
     if (campaign == nullptr) {
         cout << "Error: no active campaign. Open a campaign first.\n";
         return;
     }
-    //Read the equipment ID
-    int eqId = readInt("Equipment ID to reserve: ");
-    //Search for it in the studio
-    Equipment* eq = studio.findEquipment(eqId);
-    if (eq == nullptr) {
+    int equipmentId = readInt("Equipment ID to reserve: ", 1);
+    Equipment* equipment = studio.findEquipment(equipmentId);
+    if (equipment == nullptr) {
         cout << "Error: equipment not found.\n";
         return;
     }
-    //reserve it for the campaign
-    campaign->reserveEquipment(eq);
+    if (!equipment->getIsAvailable()) {
+        cout << "Error: equipment is already reserved.\n";
+        return;
+    }
+    campaign->reserveEquipment(equipment);
     cout << "Equipment reserved for campaign.\n";
 }
 
-
-static void doCompareCampaigns(Campaign* camp1, Campaign* camp2) {
-    //Check that both campaigns exist
-    if (camp1 == nullptr || camp2 == nullptr) {
+static void doCompareCampaigns(Campaign* first, Campaign* second) {
+    if (first == nullptr || second == nullptr) {
         cout << "Error: need two campaigns to compare.\n";
         return;
     }
-    //compares total price of both campaigns
-    if (*camp1 > *camp2)
-        cout << "Campaign \"" << camp1->getTitle() << "\" is more profitable.\n";
-    else if (*camp2 > *camp1)
-        cout << "Campaign \"" << camp2->getTitle() << "\" is more profitable.\n";
+    if (*first > *second)
+        cout << "Campaign \"" << first->getTitle() << "\" is more profitable.\n";
+    else if (*second > *first)
+        cout << "Campaign \"" << second->getTitle() << "\" is more profitable.\n";
     else
         cout << "Both campaigns have equal total price.\n";
 }
 
-
-//operator++ loops through every piece of equipment and sets isAvailable = true
 static void doCloseDay(SocialLensStudio& studio) {
     ++studio;
     cout << "Work day closed. All equipment is now available.\n";
 }
-
-//main 
 
 int main() {
     SocialLensStudio studio("SocialLens Studio");
@@ -242,8 +225,6 @@ int main() {
         case 2: {
             Campaign* opened = doOpenCampaign(studio);
             if (opened != nullptr) {
-                // Keep only the two most recent campaigns; free the one we drop
-                // so opening many campaigns doesn't leak memory.
                 delete previousCampaign;
                 previousCampaign = activeCampaign;
                 activeCampaign = opened;

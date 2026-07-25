@@ -25,22 +25,21 @@ public:
     int getClientCount() const;
     int getEquipmentCount() const;
 
-    // Add a new client to the studio roster
     void registerClient(Client* client);
 
-    // Add new equipment to the studio inventory
     void addEquipment(Equipment* eq);
 
-    // Find a client by ID; returns nullptr if not found
     Client* findClient(int clientId) const;
 
-    // Find equipment by ID; returns nullptr if not found
     Equipment* findEquipment(int equipmentId) const;
 
-    // Close the work day: mark all equipment as available for the next day
     SocialLensStudio& operator++();
 
     void print() const;
+
+private:
+    void releaseAll();
+    void copyFrom(const SocialLensStudio& other);
 };
 
-#endif // SOCIAL_LENS_STUDIO_H
+#endif

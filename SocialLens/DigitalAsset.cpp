@@ -56,8 +56,6 @@ void DigitalAsset::setBasePrice(double price)
     basePrice = price;
 }
 
-// Shared, non-pure part of printing: the fields every asset has in common.
-// Subclasses call this first and then add their own specifics.
 void DigitalAsset::print() const
 {
     std::cout << "Asset #" << assetId << " [" << fileName << "] base $" << basePrice;

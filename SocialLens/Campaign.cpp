@@ -1,9 +1,8 @@
 #include "Campaign.h"
 #include "StringUtil.h"
+#include "ArrayUtil.h"
 #include <iostream>
 
-// Starting size for the two dynamic arrays. They grow (double) on demand, so
-// this is only the initial allocation, not a hard limit.
 #define CAMPAIGN_INITIAL_CAPACITY 8
 
 Campaign::Campaign(int id, const char* title, const Client& owner, const Date& date)
@@ -23,7 +22,7 @@ Campaign::Campaign(int id, const char* title, const Client& owner, const Date& d
 Campaign::Campaign(const Campaign& other)
     : campaignId(other.campaignId),
       title(cloneString(other.title)),
-      campaignOwner(other.campaignOwner), // bind to the same client
+      campaignOwner(other.campaignOwner),
       assets(new DigitalAsset*[other.assetCapacity]),
       assetCount(other.assetCount),
       assetCapacity(other.assetCapacity),
@@ -32,25 +31,19 @@ Campaign::Campaign(const Campaign& other)
       equipmentCount(other.equipmentCount),
       equipmentCapacity(other.equipmentCapacity)
 {
-    // Assets are OWNED by the campaign, so they must be deep-copied. clone()
-    // gives us a real copy of the correct concrete type (StillPhoto/VideoClip).
     for (int i = 0; i < assetCount; ++i)
         assets[i] = other.assets[i]->clone();
 
-    // Reserved equipment is OWNED by the studio, not the campaign, so we copy
-    // only the pointers (shallow) — the campaign just references them.
     for (int i = 0; i < equipmentCount; ++i)
         reservedEquipment[i] = other.reservedEquipment[i];
 }
 
 Campaign::~Campaign()
 {
-    // Delete the assets we own, then the array that held them.
     for (int i = 0; i < assetCount; ++i)
         delete assets[i];
     delete[] assets;
 
-    // Only the pointer array is ours here; the Equipment objects belong to the studio.
     delete[] reservedEquipment;
 
     delete[] title;
@@ -95,17 +88,13 @@ void Campaign::reserveEquipment(Equipment* eq)
         return;
 
     if (equipmentCount == equipmentCapacity) {
-        int newCapacity = equipmentCapacity * 2;
-        Equipment** bigger = new Equipment*[newCapacity];
-        for (int i = 0; i < equipmentCount; ++i)
-            bigger[i] = reservedEquipment[i];
-        delete[] reservedEquipment;
-        reservedEquipment = bigger;
-        equipmentCapacity = newCapacity;
+        equipmentCapacity *= 2;
+        reservedEquipment = reinterpret_cast<Equipment**>(
+            growPointerArray(reinterpret_cast<void**>(reservedEquipment), equipmentCount, equipmentCapacity));
     }
 
     reservedEquipment[equipmentCount++] = eq;
-    eq->setIsAvailable(false); // booked for this campaign's shoot day
+    eq->setIsAvailable(false);
 }
 
 Campaign& Campaign::operator+=(DigitalAsset* asset)
@@ -114,16 +103,12 @@ Campaign& Campaign::operator+=(DigitalAsset* asset)
         return *this;
 
     if (assetCount == assetCapacity) {
-        int newCapacity = assetCapacity * 2;
-        DigitalAsset** bigger = new DigitalAsset*[newCapacity];
-        for (int i = 0; i < assetCount; ++i)
-            bigger[i] = assets[i];
-        delete[] assets;
-        assets = bigger;
-        assetCapacity = newCapacity;
+        assetCapacity *= 2;
+        assets = reinterpret_cast<DigitalAsset**>(
+            growPointerArray(reinterpret_cast<void**>(assets), assetCount, assetCapacity));
     }
 
-    assets[assetCount++] = asset; // campaign now owns this pointer
+    assets[assetCount++] = asset;
     return *this;
 }
 
@@ -146,7 +131,7 @@ std::ostream& operator<<(std::ostream& os, const Campaign& c)
     os << "Assets (" << c.assetCount << "):\n";
     for (int i = 0; i < c.assetCount; ++i) {
         os << "  - ";
-        c.assets[i]->print(); // polymorphic, prints to std::cout
+        c.assets[i]->print();
         os << "\n";
     }
 

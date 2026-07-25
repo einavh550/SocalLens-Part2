@@ -24,8 +24,6 @@ Client::~Client()
 Client& Client::operator=(const Client& other)
 {
     if (this != &other) {
-        // Free the old buffers before taking copies of the new ones,
-        // otherwise the previous allocations would leak.
         delete[] name;
         delete[] phone;
 
@@ -65,14 +63,11 @@ void Client::setPhone(const char* newPhone)
 
 Campaign* Client::openCampaign(int campaignId, const char* title, const Date& date) const
 {
-    // The client is the natural owner of the "create a campaign" action, so the
-    // Campaign is built here rather than with a raw 'new Campaign' out in main.
     return new Campaign(campaignId, title, *this, date);
 }
 
 bool Client::operator==(const Client& other) const
 {
-    // Two clients are considered the same when they share the same unique ID.
     return clientId == other.clientId;
 }
 

@@ -1,9 +1,6 @@
 #include "StillPhoto.h"
 #include <iostream>
 
-// Pricing rules for photos (documented assumptions for Part 2):
-//   - a "Story" photo is priced 20% above its base price
-//   - a "Filter" edit adds 15% over a natural (unedited) look
 #define PHOTO_STORY_MULTIPLIER  1.20
 #define PHOTO_FILTER_MULTIPLIER 1.15
 
@@ -25,7 +22,6 @@ StillPhoto::~StillPhoto()
 StillPhoto& StillPhoto::operator=(const StillPhoto& other)
 {
     if (this != &other) {
-        // Let the base class copy its own (heap-allocated) members correctly.
         DigitalAsset::operator=(other);
         orientation = other.orientation;
         editStyle = other.editStyle;
@@ -65,7 +61,6 @@ double StillPhoto::calculatePrice() const
 
 DigitalAsset* StillPhoto::clone() const
 {
-    // Polymorphic copy: the caller gets a brand-new StillPhoto it now owns.
     return new StillPhoto(*this);
 }
 

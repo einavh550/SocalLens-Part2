@@ -1,10 +1,6 @@
 #include "Drone.h"
 #include <iostream>
 
-// Because Equipment is a *virtual* base of both Camera and Aircraft, the most
-// derived class (Drone) is responsible for constructing the single shared
-// Equipment sub-object. The Equipment(...) calls inside Camera/Aircraft are
-// ignored while building a Drone, so it is initialized exactly once here.
 Drone::Drone(int id, const char* modelName, CamType camType,
     bool hasTripod, int maxAltitudeMeters,
     int batteryLifeMinutes, bool available)
@@ -30,9 +26,6 @@ Drone::~Drone()
 Drone& Drone::operator=(const Drone& other)
 {
     if (this != &other) {
-        // Assign the Camera and Aircraft parts through their own operator=.
-        // Each also re-copies the shared Equipment part; the final state is
-        // correct, and there is no leak because operator= frees before copying.
         Camera::operator=(other);
         Aircraft::operator=(other);
         batteryLifeMinutes = other.batteryLifeMinutes;

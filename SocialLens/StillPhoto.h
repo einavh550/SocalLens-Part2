@@ -29,4 +29,5 @@ public:
     void print() const override;
 };
 
-#endif // STILL_PHOTO_H
+#endif
+

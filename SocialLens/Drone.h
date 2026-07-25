@@ -4,7 +4,6 @@
 #include "Camera.h"
 #include "Aircraft.h"
 
-// Drone inherits Camera and Aircraft; Equipment is shared via virtual inheritance
 class Drone : public Camera, public Aircraft {
     int batteryLifeMinutes;
 
@@ -23,4 +22,5 @@ public:
     Equipment* clone() const override;
 };
 
-#endif // DRONE_H
+#endif
+

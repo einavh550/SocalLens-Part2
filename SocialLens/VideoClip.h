@@ -36,4 +36,4 @@ public:
 };
 
 
-#endif //__VIDEOCLIP_H
+#endif

@@ -138,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Aircraft.h" />
+    <ClInclude Include="ArrayUtil.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Campaign.h" />
     <ClInclude Include="Client.h" />

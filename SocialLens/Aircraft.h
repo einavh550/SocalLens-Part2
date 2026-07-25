@@ -20,4 +20,5 @@ public:
     Equipment* clone() const override;
 };
 
-#endif // AIRCRAFT_H
+#endif
+

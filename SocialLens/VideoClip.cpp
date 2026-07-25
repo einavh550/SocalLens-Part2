@@ -1,9 +1,6 @@
 #include "VideoClip.h"
 #include <iostream>
 
-// Pricing rules for video (documented assumptions for Part 2):
-//   - every second of footage adds a fixed production cost
-//   - a "Story" clip is priced 10% above a regular feed clip
 #define VIDEO_PRICE_PER_SECOND 2.0
 #define VIDEO_STORY_MULTIPLIER 1.10
 

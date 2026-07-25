@@ -1,8 +1,6 @@
 #include "Camera.h"
 #include <iostream>
 
-// Equipment has no default constructor, so Camera() must still hand it some
-// starting values. A default Camera is an empty Stills camera with no tripod.
 Camera::Camera()
     : Equipment(0, "", true), camType(STILLS), hasTripod(false)
 {

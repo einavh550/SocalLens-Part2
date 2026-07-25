@@ -23,8 +23,6 @@ public:
 
 	virtual void printSpecs() const =0;
 
-	// Polymorphic deep copy: returns a new heap object of the real derived type.
-	// Needed so owners (e.g. the studio) can copy equipment without knowing the type.
 	virtual Equipment* clone() const = 0;
 
 private:
@@ -35,4 +33,5 @@ private:
 
 
 
-#endif // EQUIPMENT_H
+#endif
+

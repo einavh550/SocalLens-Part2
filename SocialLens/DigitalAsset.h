@@ -33,5 +33,6 @@ private:
 
 
 
-#endif // !DIGITAL_ASSET_H
+#endif
+
 
