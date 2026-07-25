@@ -14,25 +14,6 @@ VideoClip::VideoClip(int assetId, const char* fileName, double baseprice, int du
 {
 }
 
-VideoClip::VideoClip(const VideoClip& other)
-    : DigitalAsset(other), durationInSeconds(other.durationInSeconds), videoType(other.videoType)
-{
-}
-
-VideoClip::~VideoClip()
-{
-}
-
-VideoClip& VideoClip::operator=(const VideoClip& other)
-{
-    if (this != &other) {
-        DigitalAsset::operator=(other);
-        durationInSeconds = other.durationInSeconds;
-        videoType = other.videoType;
-    }
-    return *this;
-}
-
 void VideoClip::setVidType(VideoType type)
 {
     videoType = type;

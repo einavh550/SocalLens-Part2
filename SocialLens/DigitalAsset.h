@@ -12,9 +12,9 @@ class DigitalAsset
 
 public:
 	DigitalAsset(int id, const char* fileName, double basePrice);
-	DigitalAsset(const DigitalAsset& other);
-	virtual ~DigitalAsset();
-	DigitalAsset& operator=(const DigitalAsset& other);
+	DigitalAsset(const DigitalAsset& other) = default;
+	virtual ~DigitalAsset() = default;
+	DigitalAsset& operator=(const DigitalAsset& other) = default;
 
 	int getAssetId() const;
 	const char* getFileName() const;

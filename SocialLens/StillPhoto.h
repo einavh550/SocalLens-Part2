@@ -15,9 +15,6 @@ private:
 public:
     StillPhoto(int id, const char* fileName, double basePrice,
         Orientation orient, EditStyle style);
-    StillPhoto(const StillPhoto& other);
-    ~StillPhoto();
-    StillPhoto& operator=(const StillPhoto& other);
 
     Orientation getOrientation() const;
     EditStyle getEditStyle()   const;

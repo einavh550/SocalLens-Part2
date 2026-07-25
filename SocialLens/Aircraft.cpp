@@ -7,24 +7,6 @@ Aircraft::Aircraft(int id, const char* modelName,
 {
 }
 
-Aircraft::Aircraft(const Aircraft& other)
-    : Equipment(other), maxAltitudeMeters(other.maxAltitudeMeters)
-{
-}
-
-Aircraft::~Aircraft()
-{
-}
-
-Aircraft& Aircraft::operator=(const Aircraft& other)
-{
-    if (this != &other) {
-        Equipment::operator=(other);
-        maxAltitudeMeters = other.maxAltitudeMeters;
-    }
-    return *this;
-}
-
 int Aircraft::getMaxAltitude() const
 {
     return maxAltitudeMeters;

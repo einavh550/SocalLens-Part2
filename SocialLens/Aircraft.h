@@ -9,9 +9,6 @@ class Aircraft : virtual public Equipment {
 public:
     Aircraft(int id, const char* modelName,
         int maxAltitudeMeters, bool available = true);
-    Aircraft(const Aircraft& other);
-    virtual ~Aircraft();
-    Aircraft& operator=(const Aircraft& other);
 
     int getMaxAltitude() const;
     void setMaxAltitude(int meters);

@@ -11,9 +11,6 @@ public:
     Drone(int id, const char* modelName, CamType camType,
         bool hasTripod, int maxAltitudeMeters,
         int batteryLifeMinutes, bool available = true);
-    Drone(const Drone& other);
-    ~Drone();
-    Drone& operator=(const Drone& other);
 
     int  getBatteryLife() const;
     void setBatteryLife(int minutes);

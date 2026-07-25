@@ -7,25 +7,6 @@ Equipment::Equipment(int id, const char* modelName, bool available)
 {
 }
 
-Equipment::Equipment(const Equipment& other)
-    : equipmentid(other.equipmentid), modelName(other.modelName), isAvailable(other.isAvailable)
-{
-}
-
-Equipment::~Equipment()
-{
-}
-
-Equipment& Equipment::operator=(const Equipment& other)
-{
-    if (this != &other) {
-        equipmentid = other.equipmentid;
-        modelName = other.modelName;
-        isAvailable = other.isAvailable;
-    }
-    return *this;
-}
-
 int Equipment::getEquipmentId() const
 {
     return equipmentid;

@@ -13,9 +13,9 @@ class Client {
 
 public:
     Client(int id, const char* name, const char* phone);
-    Client(const Client& other);
-    ~Client();
-    Client& operator=(const Client& other);
+    Client(const Client& other) = default;
+    ~Client() = default;
+    Client& operator=(const Client& other) = default;
 
     int getClientId() const;
     const char* getName() const;

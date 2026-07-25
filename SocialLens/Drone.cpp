@@ -11,28 +11,6 @@ Drone::Drone(int id, const char* modelName, CamType camType,
 {
 }
 
-Drone::Drone(const Drone& other)
-    : Equipment(other),
-      Camera(other),
-      Aircraft(other),
-      batteryLifeMinutes(other.batteryLifeMinutes)
-{
-}
-
-Drone::~Drone()
-{
-}
-
-Drone& Drone::operator=(const Drone& other)
-{
-    if (this != &other) {
-        Camera::operator=(other);
-        Aircraft::operator=(other);
-        batteryLifeMinutes = other.batteryLifeMinutes;
-    }
-    return *this;
-}
-
 int Drone::getBatteryLife() const
 {
     return batteryLifeMinutes;

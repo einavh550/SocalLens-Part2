@@ -10,25 +10,6 @@ StillPhoto::StillPhoto(int id, const char* fileName, double basePrice,
 {
 }
 
-StillPhoto::StillPhoto(const StillPhoto& other)
-    : DigitalAsset(other), orientation(other.orientation), editStyle(other.editStyle)
-{
-}
-
-StillPhoto::~StillPhoto()
-{
-}
-
-StillPhoto& StillPhoto::operator=(const StillPhoto& other)
-{
-    if (this != &other) {
-        DigitalAsset::operator=(other);
-        orientation = other.orientation;
-        editStyle = other.editStyle;
-    }
-    return *this;
-}
-
 StillPhoto::Orientation StillPhoto::getOrientation() const
 {
     return orientation;

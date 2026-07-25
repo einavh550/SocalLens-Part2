@@ -8,25 +8,6 @@ DigitalAsset::DigitalAsset(int id, const char* fileName, double basePrice)
 {
 }
 
-DigitalAsset::DigitalAsset(const DigitalAsset& other)
-    : assetId(other.assetId), fileName(other.fileName), basePrice(other.basePrice)
-{
-}
-
-DigitalAsset::~DigitalAsset()
-{
-}
-
-DigitalAsset& DigitalAsset::operator=(const DigitalAsset& other)
-{
-    if (this != &other) {
-        assetId = other.assetId;
-        fileName = other.fileName;
-        basePrice = other.basePrice;
-    }
-    return *this;
-}
-
 int DigitalAsset::getAssetId() const
 {
     return assetId;

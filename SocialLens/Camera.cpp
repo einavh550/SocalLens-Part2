@@ -12,25 +12,6 @@ Camera::Camera(int id, const char* modelName, CamType type,
 {
 }
 
-Camera::Camera(const Camera& other)
-    : Equipment(other), camType(other.camType), hasTripod(other.hasTripod)
-{
-}
-
-Camera::~Camera()
-{
-}
-
-Camera& Camera::operator=(const Camera& other)
-{
-    if (this != &other) {
-        Equipment::operator=(other);
-        camType = other.camType;
-        hasTripod = other.hasTripod;
-    }
-    return *this;
-}
-
 Camera::CamType Camera::getCamType() const
 {
     return camType;

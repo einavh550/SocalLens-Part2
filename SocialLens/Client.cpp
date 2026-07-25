@@ -9,25 +9,6 @@ Client::Client(int id, const char* name, const char* phone)
 {
 }
 
-Client::Client(const Client& other)
-    : clientId(other.clientId), name(other.name), phone(other.phone)
-{
-}
-
-Client::~Client()
-{
-}
-
-Client& Client::operator=(const Client& other)
-{
-    if (this != &other) {
-        clientId = other.clientId;
-        name = other.name;
-        phone = other.phone;
-    }
-    return *this;
-}
-
 int Client::getClientId() const
 {
     return clientId;

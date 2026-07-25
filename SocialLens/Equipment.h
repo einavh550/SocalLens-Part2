@@ -12,10 +12,10 @@ class Equipment
 
 public:
 	Equipment(int id,const char* modelName,bool available = true);
-	Equipment(const Equipment& other);
-	virtual ~Equipment();
+	Equipment(const Equipment& other) = default;
+	virtual ~Equipment() = default;
 
-	Equipment& operator=(const Equipment& other);
+	Equipment& operator=(const Equipment& other) = default;
 
 	int getEquipmentId() const;
 	const char* getModelName() const;
