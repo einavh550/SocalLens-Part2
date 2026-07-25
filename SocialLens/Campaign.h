@@ -11,7 +11,7 @@ class Campaign
 {
 	int campaignId;
 	char* titel;
-	Client& campaignOwner;
+	const Client& campaignOwner;
 	DigitalAsset** assets;
 	int assetCount;
 	int assetCapacity;
@@ -22,7 +22,7 @@ class Campaign
 
 	
 public:
-	Campaign(int id, const char* title, Client& owner, const Date& date);
+	Campaign(int id, const char* title, const Client& owner, const Date& date);
 	Campaign(const Campaign& other);
 	~Campaign();
 

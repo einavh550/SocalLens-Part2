@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Client.cpp" />
     <ClCompile Include="Date.cpp" />
     <ClCompile Include="program.cpp" />
   </ItemGroup>
@@ -137,6 +138,7 @@
     <ClInclude Include="Equipment.h" />
     <ClInclude Include="SocialLensStudio.h" />
     <ClInclude Include="StillPhoto.h" />
+    <ClInclude Include="StringUtil.h" />
     <ClInclude Include="VideoClip.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

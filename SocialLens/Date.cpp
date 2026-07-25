@@ -54,6 +54,6 @@ char* Date::toString() const
 
     int length = static_cast<int>(std::strlen(buffer));
     char* result = new char[length + 1];
-    std::strcpy(result, buffer);
+    std::memcpy(result, buffer, length + 1); // +1 copies the '\0' terminator too
     return result;
 }

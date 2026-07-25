@@ -2,6 +2,7 @@
 #define CLIENT_H
 
 class Campaign; // forward declaration 
+class Date;     // forward declaration
 
 class Client {
     int clientId;
@@ -20,8 +21,8 @@ public:
     void setName(const char* name);
     void setPhone(const char* phone);
 
-    // creates a new campaign
-    Campaign* openCampaign(int campaignId, const char* title) const;
+    // creates a new campaign owned by this client
+    Campaign* openCampaign(int campaignId, const char* title, const Date& date) const;
 
     bool operator==(const Client& other) const;
     void print() const;
