@@ -1,8 +1,5 @@
 #include "Campaign.h"
-#include "ArrayUtil.h"
 #include <iostream>
-
-#define CAMPAIGN_INITIAL_CAPACITY 8
 
 namespace {
 struct EquipmentListCopyContext {
@@ -36,24 +33,20 @@ Campaign::Campaign(int id, const char* title, const Client& owner, const Date& d
     : campaignId(id),
             title(title == nullptr ? "" : title),
       campaignOwner(owner),
-      assets(new DigitalAsset*[CAMPAIGN_INITIAL_CAPACITY]),
-      assetCount(0),
-      assetCapacity(CAMPAIGN_INITIAL_CAPACITY),
             creationDate(date)
 {
+        assets.reserve(8);
 }
 
 Campaign::Campaign(const Campaign& other)
     : campaignId(other.campaignId),
-    title(other.title),
+            title(other.title),
       campaignOwner(other.campaignOwner),
-      assets(new DigitalAsset*[other.assetCapacity]),
-      assetCount(other.assetCount),
-      assetCapacity(other.assetCapacity),
       creationDate(other.creationDate)
 {
-    for (int i = 0; i < assetCount; ++i)
-        assets[i] = other.assets[i]->clone();
+        assets.reserve(other.assets.size());
+        for (size_t i = 0; i < other.assets.size(); ++i)
+                assets.push_back(other.assets[i]->clone());
 
     EquipmentListCopyContext copyContext;
     copyContext.target = &reservedEquipment;
@@ -62,9 +55,8 @@ Campaign::Campaign(const Campaign& other)
 
 Campaign::~Campaign()
 {
-    for (int i = 0; i < assetCount; ++i)
+    for (size_t i = 0; i < assets.size(); ++i)
         delete assets[i];
-    delete[] assets;
 }
 
 int Campaign::getCampaignId() const
@@ -89,13 +81,13 @@ const Date& Campaign::getCreationDate() const
 
 int Campaign::getAssetCount() const
 {
-    return assetCount;
+    return static_cast<int>(assets.size());
 }
 
 double Campaign::getTotalPrice() const
 {
     double total = 0.0;
-    for (int i = 0; i < assetCount; ++i)
+    for (size_t i = 0; i < assets.size(); ++i)
         total += assets[i]->calculatePrice();
     return total;
 }
@@ -115,13 +107,7 @@ Campaign& Campaign::operator+=(DigitalAsset* asset)
     if (asset == nullptr)
         return *this;
 
-    if (assetCount == assetCapacity) {
-        assetCapacity *= 2;
-        assets = reinterpret_cast<DigitalAsset**>(
-            growPointerArray(reinterpret_cast<void**>(assets), assetCount, assetCapacity));
-    }
-
-    assets[assetCount++] = asset;
+    assets.push_back(asset);
     return *this;
 }
 
@@ -141,8 +127,8 @@ std::ostream& operator<<(std::ostream& os, const Campaign& c)
     os << "Date: " << dateText << "\n";
     delete[] dateText;
 
-    os << "Assets (" << c.assetCount << "):\n";
-    for (int i = 0; i < c.assetCount; ++i) {
+    os << "Assets (" << c.assets.size() << "):\n";
+    for (size_t i = 0; i < c.assets.size(); ++i) {
         os << "  - ";
         c.assets[i]->print();
         os << "\n";

@@ -2,19 +2,14 @@
 #define SOCIAL_LENS_STUDIO_H
 
 #include <string>
+#include <vector>
 #include "Client.h"
 #include "Equipment.h"
 
 class SocialLensStudio {
-    static const int INITIAL_CAPACITY = 20;
-
     std::string studioName;
-    Client** clients;
-    int clientCount;
-    int clientCapacity;
-    Equipment** equipmentList;
-    int equipmentCount;
-    int equipmentCapacity;
+    std::vector<Client*> clients;
+    std::vector<Equipment*> equipmentList;
 
 public:
     SocialLensStudio(const char* studioName);

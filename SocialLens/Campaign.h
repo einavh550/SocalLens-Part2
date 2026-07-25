@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <string>
+#include <vector>
 #include "Client.h"
 #include "Date.h"
 #include "DigitalAsset.h"
@@ -14,9 +15,7 @@ class Campaign
 	int campaignId;
 	std::string title;
 	const Client& campaignOwner;
-	DigitalAsset** assets;
-	int assetCount;
-	int assetCapacity;
+	std::vector<DigitalAsset*> assets;
 	Date creationDate;
 	LinkedList<Equipment*> reservedEquipment;
 

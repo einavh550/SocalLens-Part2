@@ -1,15 +1,8 @@
 #include "SocialLensStudio.h"
-#include "ArrayUtil.h"
 #include <iostream>
 
 SocialLensStudio::SocialLensStudio(const char* studioName)
-    : studioName(studioName == nullptr ? "" : studioName),
-      clients(new Client*[INITIAL_CAPACITY]),
-      clientCount(0),
-      clientCapacity(INITIAL_CAPACITY),
-      equipmentList(new Equipment*[INITIAL_CAPACITY]),
-      equipmentCount(0),
-      equipmentCapacity(INITIAL_CAPACITY)
+    : studioName(studioName == nullptr ? "" : studioName)
 {
 }
 
@@ -34,30 +27,26 @@ SocialLensStudio& SocialLensStudio::operator=(const SocialLensStudio& other)
 
 void SocialLensStudio::releaseAll()
 {
-    for (int i = 0; i < clientCount; ++i)
+    for (size_t i = 0; i < clients.size(); ++i)
         delete clients[i];
-    delete[] clients;
+    clients.clear();
 
-    for (int i = 0; i < equipmentCount; ++i)
+    for (size_t i = 0; i < equipmentList.size(); ++i)
         delete equipmentList[i];
-    delete[] equipmentList;
+    equipmentList.clear();
 }
 
 void SocialLensStudio::copyFrom(const SocialLensStudio& other)
 {
     studioName = other.studioName;
 
-    clientCount = other.clientCount;
-    clientCapacity = other.clientCapacity;
-    clients = new Client*[clientCapacity];
-    for (int i = 0; i < clientCount; ++i)
-        clients[i] = new Client(*other.clients[i]);
+    clients.reserve(other.clients.size());
+    for (size_t i = 0; i < other.clients.size(); ++i)
+        clients.push_back(new Client(*other.clients[i]));
 
-    equipmentCount = other.equipmentCount;
-    equipmentCapacity = other.equipmentCapacity;
-    equipmentList = new Equipment*[equipmentCapacity];
-    for (int i = 0; i < equipmentCount; ++i)
-        equipmentList[i] = other.equipmentList[i]->clone();
+    equipmentList.reserve(other.equipmentList.size());
+    for (size_t i = 0; i < other.equipmentList.size(); ++i)
+        equipmentList.push_back(other.equipmentList[i]->clone());
 }
 
 const char* SocialLensStudio::getStudioName() const
@@ -67,12 +56,12 @@ const char* SocialLensStudio::getStudioName() const
 
 int SocialLensStudio::getClientCount() const
 {
-    return clientCount;
+    return static_cast<int>(clients.size());
 }
 
 int SocialLensStudio::getEquipmentCount() const
 {
-    return equipmentCount;
+    return static_cast<int>(equipmentList.size());
 }
 
 void SocialLensStudio::registerClient(Client* client)
@@ -80,13 +69,7 @@ void SocialLensStudio::registerClient(Client* client)
     if (client == nullptr)
         return;
 
-    if (clientCount == clientCapacity) {
-        clientCapacity *= 2;
-        clients = reinterpret_cast<Client**>(
-            growPointerArray(reinterpret_cast<void**>(clients), clientCount, clientCapacity));
-    }
-
-    clients[clientCount++] = client;
+    clients.push_back(client);
 }
 
 void SocialLensStudio::addEquipment(Equipment* eq)
@@ -94,18 +77,12 @@ void SocialLensStudio::addEquipment(Equipment* eq)
     if (eq == nullptr)
         return;
 
-    if (equipmentCount == equipmentCapacity) {
-        equipmentCapacity *= 2;
-        equipmentList = reinterpret_cast<Equipment**>(
-            growPointerArray(reinterpret_cast<void**>(equipmentList), equipmentCount, equipmentCapacity));
-    }
-
-    equipmentList[equipmentCount++] = eq;
+    equipmentList.push_back(eq);
 }
 
 Client* SocialLensStudio::findClient(int clientId) const
 {
-    for (int i = 0; i < clientCount; ++i)
+    for (size_t i = 0; i < clients.size(); ++i)
         if (clients[i]->getClientId() == clientId)
             return clients[i];
     return nullptr;
@@ -113,7 +90,7 @@ Client* SocialLensStudio::findClient(int clientId) const
 
 Equipment* SocialLensStudio::findEquipment(int equipmentId) const
 {
-    for (int i = 0; i < equipmentCount; ++i)
+    for (size_t i = 0; i < equipmentList.size(); ++i)
         if (equipmentList[i]->getEquipmentId() == equipmentId)
             return equipmentList[i];
     return nullptr;
@@ -121,7 +98,7 @@ Equipment* SocialLensStudio::findEquipment(int equipmentId) const
 
 SocialLensStudio& SocialLensStudio::operator++()
 {
-    for (int i = 0; i < equipmentCount; ++i)
+    for (size_t i = 0; i < equipmentList.size(); ++i)
         equipmentList[i]->setIsAvailable(true);
     return *this;
 }
@@ -130,15 +107,15 @@ void SocialLensStudio::print() const
 {
     std::cout << "Studio: " << studioName << "\n";
 
-    std::cout << "Clients (" << clientCount << "):\n";
-    for (int i = 0; i < clientCount; ++i) {
+    std::cout << "Clients (" << clients.size() << "):\n";
+    for (size_t i = 0; i < clients.size(); ++i) {
         std::cout << "  - ";
         clients[i]->print();
         std::cout << "\n";
     }
 
-    std::cout << "Equipment (" << equipmentCount << "):\n";
-    for (int i = 0; i < equipmentCount; ++i) {
+    std::cout << "Equipment (" << equipmentList.size() << "):\n";
+    for (size_t i = 0; i < equipmentList.size(); ++i) {
         std::cout << "  - ";
         equipmentList[i]->printSpecs();
         std::cout << (equipmentList[i]->getIsAvailable() ? " [available]" : " [reserved]")
