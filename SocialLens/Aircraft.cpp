@@ -7,11 +7,6 @@ Aircraft::Aircraft(int id, const char* modelName,
 {
 }
 
-Aircraft::Aircraft(const Aircraft& other)
-    : Equipment(other), maxAltitudeMeters(other.maxAltitudeMeters)
-{
-}
-
 Aircraft::~Aircraft()
 {
 }

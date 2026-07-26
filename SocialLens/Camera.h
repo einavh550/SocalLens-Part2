@@ -18,7 +18,6 @@ public:
         bool hasTripod;
 
     public:
-        Camera();
         Camera(int id, const char* modelName, CamType type,
             bool hasTripod, bool available = true);
         Camera(const Camera& other);

@@ -4,6 +4,10 @@
 #include "Client.h"
 #include "Equipment.h"
 
+class Campaign;
+class Date;
+class DigitalAsset;
+
 class SocialLensStudio {
     static const int INITIAL_CAPACITY = 20;
 
@@ -14,6 +18,8 @@ class SocialLensStudio {
     Equipment** equipmentList;
     int equipmentCount;
     int equipmentCapacity;
+    Campaign* activeCampaign;
+    Campaign* previousCampaign;
 
 public:
     SocialLensStudio(const char* studioName);
@@ -32,6 +38,11 @@ public:
     Client* findClient(int clientId) const;
 
     Equipment* findEquipment(int equipmentId) const;
+
+    Campaign* openCampaign(int clientId, int campaignId, const char* title, const Date& date);
+    Campaign* getActiveCampaign() const;
+    Campaign* getPreviousCampaign() const;
+    void addAssetToActiveCampaign(DigitalAsset* asset);
 
     SocialLensStudio& operator++();
 

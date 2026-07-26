@@ -1,6 +1,8 @@
 #ifndef DATE_H
 #define DATE_H
 
+#include <ostream>
+
 class Date
 {
 private:
@@ -20,7 +22,7 @@ public:
     void setMonth(int m);
     void setYear(int y);
 
-    char* toString() const;
+    friend std::ostream& operator<<(std::ostream& os, const Date& date);
 };
 
 #endif

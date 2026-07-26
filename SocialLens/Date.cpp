@@ -1,6 +1,4 @@
 #include "Date.h"
-#include <cstdio>
-#include <cstring>
 
 Date::Date()
     : day(1), month(1), year(2000)
@@ -42,13 +40,23 @@ void Date::setYear(int y)
     year = y;
 }
 
-char* Date::toString() const
+std::ostream& operator<<(std::ostream& os, const Date& date)
 {
-    char buffer[32];
-    std::snprintf(buffer, sizeof(buffer), "%02d/%02d/%04d", day, month, year);
+    if (date.day < 10)
+        os << '0';
+    os << date.day << '/';
 
-    int length = static_cast<int>(std::strlen(buffer));
-    char* result = new char[length + 1];
-    std::memcpy(result, buffer, length + 1);
-    return result;
+    if (date.month < 10)
+        os << '0';
+    os << date.month << '/';
+
+    if (date.year < 1000)
+        os << '0';
+    if (date.year < 100)
+        os << '0';
+    if (date.year < 10)
+        os << '0';
+    os << date.year;
+
+    return os;
 }

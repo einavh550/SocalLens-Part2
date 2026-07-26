@@ -124,9 +124,7 @@ std::ostream& operator<<(std::ostream& os, const Campaign& c)
     os << "Owner: " << c.campaignOwner.getName()
        << " (ID " << c.campaignOwner.getClientId() << ")\n";
 
-    char* dateText = c.creationDate.toString();
-    os << "Date: " << dateText << "\n";
-    delete[] dateText;
+    os << "Date: " << c.creationDate << "\n";
 
     os << "Assets (" << c.assetCount << "):\n";
     for (int i = 0; i < c.assetCount; ++i) {

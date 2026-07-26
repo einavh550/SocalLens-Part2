@@ -1,6 +1,9 @@
 #include "SocialLensStudio.h"
 #include "StringUtil.h"
 #include "ArrayUtil.h"
+#include "Campaign.h"
+#include "Date.h"
+#include "DigitalAsset.h"
 #include <iostream>
 
 SocialLensStudio::SocialLensStudio(const char* studioName)
@@ -10,7 +13,9 @@ SocialLensStudio::SocialLensStudio(const char* studioName)
       clientCapacity(INITIAL_CAPACITY),
       equipmentList(new Equipment*[INITIAL_CAPACITY]),
       equipmentCount(0),
-      equipmentCapacity(INITIAL_CAPACITY)
+    equipmentCapacity(INITIAL_CAPACITY),
+    activeCampaign(nullptr),
+    previousCampaign(nullptr)
 {
 }
 
@@ -35,6 +40,15 @@ SocialLensStudio& SocialLensStudio::operator=(const SocialLensStudio& other)
 
 void SocialLensStudio::releaseAll()
 {
+    if (previousCampaign != nullptr) {
+        delete previousCampaign;
+        previousCampaign = nullptr;
+    }
+    if (activeCampaign != nullptr) {
+        delete activeCampaign;
+        activeCampaign = nullptr;
+    }
+
     for (int i = 0; i < clientCount; ++i)
         delete clients[i];
     delete[] clients;
@@ -61,6 +75,9 @@ void SocialLensStudio::copyFrom(const SocialLensStudio& other)
     equipmentList = new Equipment*[equipmentCapacity];
     for (int i = 0; i < equipmentCount; ++i)
         equipmentList[i] = other.equipmentList[i]->clone();
+
+    activeCampaign = nullptr;
+    previousCampaign = nullptr;
 }
 
 const char* SocialLensStudio::getStudioName() const
@@ -120,6 +137,40 @@ Equipment* SocialLensStudio::findEquipment(int equipmentId) const
         if (equipmentList[i]->getEquipmentId() == equipmentId)
             return equipmentList[i];
     return nullptr;
+}
+
+Campaign* SocialLensStudio::openCampaign(int clientId, int campaignId, const char* title, const Date& date)
+{
+    Client* owner = findClient(clientId);
+    if (owner == nullptr)
+        return nullptr;
+
+    Campaign* campaign = owner->openCampaign(campaignId, title, date);
+
+    if (previousCampaign != nullptr)
+        delete previousCampaign;
+
+    previousCampaign = activeCampaign;
+    activeCampaign = campaign;
+    return activeCampaign;
+}
+
+Campaign* SocialLensStudio::getActiveCampaign() const
+{
+    return activeCampaign;
+}
+
+Campaign* SocialLensStudio::getPreviousCampaign() const
+{
+    return previousCampaign;
+}
+
+void SocialLensStudio::addAssetToActiveCampaign(DigitalAsset* asset)
+{
+    if (activeCampaign == nullptr || asset == nullptr)
+        return;
+
+    *activeCampaign += asset;
 }
 
 SocialLensStudio& SocialLensStudio::operator++()

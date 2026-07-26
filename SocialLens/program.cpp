@@ -81,24 +81,27 @@ static void doRegisterClient(SocialLensStudio& studio) {
     cout << "Client registered successfully.\n";
 }
 
-static Campaign* doOpenCampaign(SocialLensStudio& studio) {
+static void doOpenCampaign(SocialLensStudio& studio) {
     int clientId = readInt("Client ID to open campaign for: ", 1);
-    Client* owner = studio.findClient(clientId);
-    if (owner == nullptr) {
+    if (studio.findClient(clientId) == nullptr) {
         cout << "Error: client not found.\n";
-        return nullptr;
+        return;
     }
     int campaignId = readInt("Campaign ID:    ", 1);
     char title[200];
     readString("Campaign title: ", title, 200);
     Date date = readDate("Creation date:");
-    Campaign* campaign = owner->openCampaign(campaignId, title, date);
+    Campaign* campaign = studio.openCampaign(clientId, campaignId, title, date);
+    if (campaign == nullptr)
+        return;
+
     cout << "Campaign opened successfully.\n";
-    return campaign;
+    cout << *campaign;
 }
 
 
-static void doAddAsset(Campaign* campaign) {
+static void doAddAsset(SocialLensStudio& studio) {
+    Campaign* campaign = studio.getActiveCampaign();
     if (campaign == nullptr) {
         cout << "Error: no active campaign. Open a campaign first.\n";
         return;
@@ -116,14 +119,14 @@ static void doAddAsset(Campaign* campaign) {
         int styleChoice = readInt("Choice: ", 1, 2);
         StillPhoto::Orientation orientation = (orientationChoice == 2) ? StillPhoto::STORY : StillPhoto::FEED;
         StillPhoto::EditStyle style = (styleChoice == 2) ? StillPhoto::NATURAL : StillPhoto::FILTER;
-        *campaign += new StillPhoto(id, fileName, basePrice, orientation, style);
+        studio.addAssetToActiveCampaign(new StillPhoto(id, fileName, basePrice, orientation, style));
     }
     else {
         int duration = readInt("Duration (seconds): ", 0);
         cout << "Video type: 1=Feed  2=Story\n";
         int videoChoice = readInt("Choice: ", 1, 2);
         VideoClip::VideoType videoType = (videoChoice == 2) ? VideoClip::STORY : VideoClip::FEED;
-        *campaign += new VideoClip(id, fileName, basePrice, duration, videoType);
+        studio.addAssetToActiveCampaign(new VideoClip(id, fileName, basePrice, duration, videoType));
     }
     cout << "Asset added to campaign.\n";
 }
@@ -163,7 +166,8 @@ static void doAddEquipment(SocialLensStudio& studio) {
     cout << "Equipment added to studio.\n";
 }
 
-static void doReserveEquipment(SocialLensStudio& studio, Campaign* campaign) {
+static void doReserveEquipment(SocialLensStudio& studio) {
+    Campaign* campaign = studio.getActiveCampaign();
     if (campaign == nullptr) {
         cout << "Error: no active campaign. Open a campaign first.\n";
         return;
@@ -182,7 +186,9 @@ static void doReserveEquipment(SocialLensStudio& studio, Campaign* campaign) {
     cout << "Equipment reserved for campaign.\n";
 }
 
-static void doCompareCampaigns(Campaign* first, Campaign* second) {
+static void doCompareCampaigns(SocialLensStudio& studio) {
+    Campaign* first = studio.getActiveCampaign();
+    Campaign* second = studio.getPreviousCampaign();
     if (first == nullptr || second == nullptr) {
         cout << "Error: need two campaigns to compare.\n";
         return;
@@ -203,9 +209,6 @@ static void doCloseDay(SocialLensStudio& studio) {
 int main() {
     SocialLensStudio studio("SocialLens Studio");
 
-    Campaign* activeCampaign = nullptr;
-    Campaign* previousCampaign = nullptr;
-
     bool running = true;
     while (running) {
         cout << "\n=== SocialLens Studio Menu ===\n"
@@ -222,27 +225,20 @@ int main() {
         case 1:
             doRegisterClient(studio);
             break;
-        case 2: {
-            Campaign* opened = doOpenCampaign(studio);
-            if (opened != nullptr) {
-                delete previousCampaign;
-                previousCampaign = activeCampaign;
-                activeCampaign = opened;
-                cout << *activeCampaign;
-            }
+        case 2:
+            doOpenCampaign(studio);
             break;
-        }
         case 3:
-            doAddAsset(activeCampaign);
+            doAddAsset(studio);
             break;
         case 4:
             doAddEquipment(studio);
             break;
         case 5:
-            doReserveEquipment(studio, activeCampaign);
+            doReserveEquipment(studio);
             break;
         case 6:
-            doCompareCampaigns(activeCampaign, previousCampaign);
+            doCompareCampaigns(studio);
             break;
         case 7:
             doCloseDay(studio);
@@ -256,7 +252,5 @@ int main() {
         }
     }
 
-    delete activeCampaign;
-    delete previousCampaign;
     return 0;
 }
