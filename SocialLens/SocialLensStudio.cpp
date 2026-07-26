@@ -1,4 +1,5 @@
 #include "SocialLensStudio.h"
+#include "Campaign.h"
 #include <iostream>
 #include <utility>
 
@@ -58,6 +59,36 @@ Equipment* SocialLensStudio::findEquipment(int equipmentId) const
         if (equipmentList[i]->getEquipmentId() == equipmentId)
             return equipmentList[i].get();
     return nullptr;
+}
+
+Campaign* SocialLensStudio::openCampaign(int clientId, int campaignId, const char* title, const Date& date)
+{
+    Client* owner = findClient(clientId);
+    if (owner == nullptr)
+        return nullptr;
+
+    std::unique_ptr<Campaign> campaign = owner->openCampaign(campaignId, title, date);
+    previousCampaign = std::move(activeCampaign);
+    activeCampaign = std::move(campaign);
+    return activeCampaign.get();
+}
+
+Campaign* SocialLensStudio::getActiveCampaign() const
+{
+    return activeCampaign.get();
+}
+
+Campaign* SocialLensStudio::getPreviousCampaign() const
+{
+    return previousCampaign.get();
+}
+
+void SocialLensStudio::addAssetToActiveCampaign(std::unique_ptr<DigitalAsset> asset)
+{
+    if (activeCampaign == nullptr || asset == nullptr)
+        return;
+
+    *activeCampaign += std::move(asset);
 }
 
 SocialLensStudio& SocialLensStudio::operator++()

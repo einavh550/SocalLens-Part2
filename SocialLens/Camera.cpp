@@ -1,11 +1,6 @@
 #include "Camera.h"
 #include <iostream>
 
-Camera::Camera()
-    : Equipment(0, "", true), camType(STILLS), hasTripod(false)
-{
-}
-
 Camera::Camera(int id, const char* modelName, CamType type,
     bool hasTripod, bool available)
     : Equipment(id, modelName, available), camType(type), hasTripod(hasTripod)
